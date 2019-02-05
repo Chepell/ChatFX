@@ -5,21 +5,22 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 public class App extends Application {
 
-    @Override
-    public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("view/userAuth.fxml"));
-        primaryStage.setTitle("Authorization");
-        primaryStage.setScene(new Scene(root));
-//        Image icon = new Image(getClass().getResourceAsStream("view/icon.png"));
-//        primaryStage.getIcons().add(icon); // установка иконки
-        primaryStage.show();
-    }
+	@Override
+	public void start(Stage stage) throws Exception {
+		Parent root = FXMLLoader.load(getClass().getResource("view/userAuth.fxml"));
+		stage.setTitle("  Authorization");
+		stage.setScene(new Scene(root));
+		stage.setResizable(false);
+		stage.initStyle(StageStyle.UTILITY);
+		stage.show();
+	}
 
 
-    public static void main(String[] args) {
-        launch(args);
-    }
+	public static void main(String[] args) {
+		launch(args);
+	}
 }

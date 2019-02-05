@@ -12,6 +12,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.IOException;
 
@@ -39,7 +40,8 @@ public class UserAuthController {
 	}
 
 	// открытие главного окна чата в случае успешной авторизации в БД после нажатия кнопки Login
-	public void openChatAfterLogin(ActionEvent event) {
+	@FXML
+	void openChatAfterLogin(ActionEvent event) {
 		// провека авторизации в БД
 		if (authorizationCheck()) {
 			// получение текущей платформы по элементу
@@ -47,8 +49,9 @@ public class UserAuthController {
 			try {
 				// загрузка вью новой сцены
 				Parent root = FXMLLoader.load(getClass().getResource("view/chat.fxml"));
-				stage.setTitle("Chat");
+				stage.setTitle("  Chat");
 				stage.setScene(new Scene(root));
+				stage.setResizable(false);
 				stage.show();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -59,7 +62,8 @@ public class UserAuthController {
 	}
 
 	// закрытие программы при нажатии кнопки Cancel
-	public void closeProgram(ActionEvent event) {
+	@FXML
+	void closeProgram(ActionEvent event) {
 		// получение текущей платформы по элементу
 		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 		// закрытие платформы
@@ -69,7 +73,7 @@ public class UserAuthController {
 		System.exit(0);
 	}
 
-	// провека присутствия пользователя в БД
+	// провека наличия пользователя в БД
 	private boolean authorizationCheck() {
 		return true;
 	}

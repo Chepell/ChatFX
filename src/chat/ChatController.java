@@ -9,6 +9,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.IOException;
 
@@ -24,7 +25,10 @@ public class ChatController {
 	private MenuItem addNewUserChatMenu;
 
 	@FXML
-	private MenuItem delitEditUser;
+	private MenuItem deleteEditUserMenu;
+
+	@FXML
+	private MenuItem aboutMenu;
 
 	@FXML
 	void initialize() {}
@@ -36,6 +40,8 @@ public class ChatController {
 		logoff();
 		// получение текущей платформы из объекта меню
 		Stage stage = (Stage) menuBar.getScene().getWindow();
+		// закрытие платформы
+		stage.hide();
 		try {
 			// загрузка вью новой сцены
 			Parent root = FXMLLoader.load(getClass().getResource("view/userAuth.fxml"));
@@ -49,9 +55,13 @@ public class ChatController {
 
 	// закрытие программы при выборе Menu -> Quit
 	@FXML
-	public void closeProgram(ActionEvent event) {
+	void closeProgram(ActionEvent event) {
 		// разлогиниваюсь
 		logoff();
+		// получение текущей платформы из объекта меню
+		Stage stage = (Stage) menuBar.getScene().getWindow();
+		// закрытие платформы
+		stage.hide();
 		// завершение программы
 		Platform.exit();
 		System.exit(0);
@@ -60,30 +70,35 @@ public class ChatController {
 
 	// открываю окно добавления нового пользователя Edit -> Add New User
 	@FXML
-	public void openAddNewUserScene(ActionEvent event) {
-		try {
-			// загрузка вью новой сцены
-			Parent root = FXMLLoader.load(getClass().getResource("view/addNewUser.fxml"));
-			// создаю новую площадку, окно появится поверх существующего
-			Stage stage = new Stage();
-			stage.setTitle("Add New User");
-			stage.setScene(new Scene(root));
-			stage.show();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	void openAddNewUserScene(ActionEvent event) {
+		popupScene("addNewUser", "Add New User");
 	}
 
 	// открываю окно удаления/изменения пользователя Edit -> Delete/Edit User
 	@FXML
-	public void openDeleteEditUserScene(ActionEvent event) {
+	void openDeleteEditUserScene(ActionEvent event) {
+		popupScene("deleteEditUser", "Delete/Edit User");
+	}
+
+	// открываю окно информации о программе Help -> About
+	@FXML
+	void openAboutScene(ActionEvent event) {
+		popupScene("about", "About App");
+	}
+
+	// сервисный метод открытия всплывающих окон из меню
+	private void popupScene(String fxmlFileName, String SceneTitle) {
+		// полный путь к вью файлу сцены
+		String file = "view/" + fxmlFileName + ".fxml";
 		try {
 			// загрузка вью новой сцены
-			Parent root = FXMLLoader.load(getClass().getResource("view/deleteEditUser.fxml"));
+			Parent root = FXMLLoader.load(getClass().getResource(file));
 			// создаю новую площадку, окно появится поверх существующего
 			Stage stage = new Stage();
-			stage.setTitle("Delete/Edit User");
+			stage.setTitle("  " + SceneTitle);
 			stage.setScene(new Scene(root));
+			stage.setResizable(false);
+			stage.initStyle(StageStyle.UTILITY);
 			stage.show();
 		} catch (IOException e) {
 			e.printStackTrace();

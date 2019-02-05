@@ -34,7 +34,7 @@ public class AddNewUserController {
 
 	// закрытие окна при нажатии на кнопку Cancel
 	@FXML
-	public void closeScene(ActionEvent event) {
+	void closeScene(ActionEvent event) {
 		// получение текущей платформы по элементу
 		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 		stage.hide();
@@ -42,7 +42,7 @@ public class AddNewUserController {
 
 	// закрытие окна при нажатии на кнопку Add User
 	@FXML
-	public void addNewUser(ActionEvent event) {
+	void addNewUser(ActionEvent event) {
 		// если добавление прошло успешно
 		if (addUserInDB()) {
 			// закрываю окно
