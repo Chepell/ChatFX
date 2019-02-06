@@ -37,6 +37,7 @@ public class AddNewUserController {
 	void closeScene(ActionEvent event) {
 		// получение текущей платформы по элементу
 		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+		// прячу текущую сцену
 		stage.hide();
 	}
 

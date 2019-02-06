@@ -12,7 +12,6 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 import java.io.IOException;
 
@@ -46,6 +45,8 @@ public class UserAuthController {
 		if (authorizationCheck()) {
 			// получение текущей платформы по элементу
 			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+			// прячу текущую сцену
+			stage.hide();
 			try {
 				// загрузка вью новой сцены
 				Parent root = FXMLLoader.load(getClass().getResource("view/chat.fxml"));
@@ -66,7 +67,7 @@ public class UserAuthController {
 	void closeProgram(ActionEvent event) {
 		// получение текущей платформы по элементу
 		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-		// закрытие платформы
+		// прячу текущую сцену
 		stage.hide();
 		// завершение программы
 		Platform.exit();

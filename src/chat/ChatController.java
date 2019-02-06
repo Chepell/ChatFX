@@ -40,7 +40,7 @@ public class ChatController {
 		logoff();
 		// получение текущей платформы из объекта меню
 		Stage stage = (Stage) menuBar.getScene().getWindow();
-		// закрытие платформы
+		// прячу текущую сцену
 		stage.hide();
 		try {
 			// загрузка вью новой сцены
@@ -60,7 +60,7 @@ public class ChatController {
 		logoff();
 		// получение текущей платформы из объекта меню
 		Stage stage = (Stage) menuBar.getScene().getWindow();
-		// закрытие платформы
+		// прячу текущую сцену
 		stage.hide();
 		// завершение программы
 		Platform.exit();
