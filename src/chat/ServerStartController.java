@@ -35,6 +35,11 @@ public class ServerStartController {
 	}
 
 	@FXML
+	void openServerSettings(ActionEvent event) {
+
+	}
+
+	@FXML
 	void closeProgram(ActionEvent event) {
 		// закрытие коннекшена к БД
 		DatabaseHandler.closeSessionFactory();
