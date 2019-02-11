@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="chat.ServerSettingsController">
+   <children>
+      <Label layoutX="21.0" layoutY="25.0" text="ip">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </Label>
+      <TextField fx:id="databaseIpFIeld" layoutX="21.0" layoutY="50.0" prefHeight="37.0" prefWidth="122.0" text="localhost">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </TextField>
+      <Label layoutX="21.0" layoutY="94.0" text="port">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </Label>
+      <TextField fx:id="databasePortFIeld" layoutX="21.0" layoutY="119.0" prefHeight="37.0" prefWidth="122.0" text="3766">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </TextField>
+      <Label layoutX="129.0" layoutY="2.0" text="Database:">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </Label>
+      <Label layoutX="21.0" layoutY="169.0" text="username">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </Label>
+      <TextField fx:id="databaseUsernameFIeld" layoutX="21.0" layoutY="194.0" prefHeight="37.0" prefWidth="122.0" text="springstudent">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </TextField>
+      <Label layoutX="178.0" layoutY="38.0" text="schema">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </Label>
+      <TextField fx:id="databaseSchemaFIeld" layoutX="178.0" layoutY="63.0" prefHeight="37.0" prefWidth="108.0" text="chat_base">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </TextField>
+      <Label layoutX="17.0" layoutY="247.0" text="password">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </Label>
+      <PasswordField fx:id="databasePasswordFIeld" layoutX="17.0" layoutY="272.0" prefHeight="37.0" prefWidth="122.0" text="springstudent">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </PasswordField>
+   </children>
+</AnchorPane>

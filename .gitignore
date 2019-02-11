@@ -23,8 +23,8 @@ hs_err_pid*
 
 *.iml
 .idea/*
-*.txt
-*.png
-*.jpg
+#*.txt
+#*.png
+#*.jpg
 *.html
 *.bin
