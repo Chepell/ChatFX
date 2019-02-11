@@ -1,68 +1,109 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.Group?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="chat.ServerSettingsController">
+<AnchorPane prefHeight="405.0" prefWidth="260.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="chat.ServerSettingsController">
    <children>
-      <Label layoutX="21.0" layoutY="25.0" text="ip">
+      <VBox layoutX="53.0" layoutY="14.0" prefHeight="320.0" prefWidth="155.0">
+         <children>
+            <Group>
+               <children>
+                  <Label text="ip">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="databaseIpField" layoutY="25.0" prefHeight="37.0" prefWidth="155.0">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </TextField>
+               </children>
+            </Group>
+            <Group>
+               <children>
+                  <Label text="port">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="databasePortField" layoutY="25.0" prefHeight="37.0" prefWidth="155.0">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </TextField>
+               </children>
+            </Group>
+            <Group>
+               <children>
+                  <Label text="username">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="databaseUsernameField" layoutY="25.0" prefHeight="37.0" prefWidth="155.0">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </TextField>
+               </children>
+            </Group>
+            <Group>
+               <children>
+                  <Label text="password">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <PasswordField fx:id="databasePasswordField" layoutY="25.0" prefHeight="37.0" prefWidth="155.0">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </PasswordField>
+               </children>
+            </Group>
+            <Group>
+               <children>
+                  <Label text="schema">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="databaseSchemaField" layoutY="25.0" prefHeight="37.0" prefWidth="155.0">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </TextField>
+               </children>
+            </Group>
+         </children>
+      </VBox>
+      <HBox layoutX="12.0" layoutY="358.0" prefHeight="37.0" prefWidth="236.0" spacing="113.0">
+         <children>
+            <Button mnemonicParsing="false" onAction="#closeSettings" prefHeight="37.0" prefWidth="70.0" text="Cancel">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Button>
+            <Button alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#saveSettings" prefHeight="37.0" prefWidth="56.0" text="Save">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Button>
+         </children>
+      </HBox>
+      <Label fx:id="errorLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="12.0" layoutY="330.0" prefHeight="25.0" prefWidth="236.0" text="errors here" textAlignment="CENTER">
          <font>
             <Font size="16.0" />
          </font>
       </Label>
-      <TextField fx:id="databaseIpFIeld" layoutX="21.0" layoutY="50.0" prefHeight="37.0" prefWidth="122.0" text="localhost">
-         <font>
-            <Font size="16.0" />
-         </font>
-      </TextField>
-      <Label layoutX="21.0" layoutY="94.0" text="port">
-         <font>
-            <Font size="16.0" />
-         </font>
-      </Label>
-      <TextField fx:id="databasePortFIeld" layoutX="21.0" layoutY="119.0" prefHeight="37.0" prefWidth="122.0" text="3766">
-         <font>
-            <Font size="16.0" />
-         </font>
-      </TextField>
-      <Label layoutX="129.0" layoutY="2.0" text="Database:">
-         <font>
-            <Font size="16.0" />
-         </font>
-      </Label>
-      <Label layoutX="21.0" layoutY="169.0" text="username">
-         <font>
-            <Font size="16.0" />
-         </font>
-      </Label>
-      <TextField fx:id="databaseUsernameFIeld" layoutX="21.0" layoutY="194.0" prefHeight="37.0" prefWidth="122.0" text="springstudent">
-         <font>
-            <Font size="16.0" />
-         </font>
-      </TextField>
-      <Label layoutX="178.0" layoutY="38.0" text="schema">
-         <font>
-            <Font size="16.0" />
-         </font>
-      </Label>
-      <TextField fx:id="databaseSchemaFIeld" layoutX="178.0" layoutY="63.0" prefHeight="37.0" prefWidth="108.0" text="chat_base">
-         <font>
-            <Font size="16.0" />
-         </font>
-      </TextField>
-      <Label layoutX="17.0" layoutY="247.0" text="password">
-         <font>
-            <Font size="16.0" />
-         </font>
-      </Label>
-      <PasswordField fx:id="databasePasswordFIeld" layoutX="17.0" layoutY="272.0" prefHeight="37.0" prefWidth="122.0" text="springstudent">
-         <font>
-            <Font size="16.0" />
-         </font>
-      </PasswordField>
    </children>
 </AnchorPane>

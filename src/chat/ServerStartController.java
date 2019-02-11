@@ -11,7 +11,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 
 import java.io.IOException;
@@ -34,9 +36,23 @@ public class ServerStartController {
 		errorLabel.setText("");
 	}
 
+	/**
+	 * вызыватеся при нажатии гиперсыылки database settings
+	 * @param event
+	 */
 	@FXML
-	void openServerSettings(ActionEvent event) {
-
+	void openServerSettings(ActionEvent event) throws IOException {
+		FXMLLoader loader = new FXMLLoader();
+		loader.setLocation(getClass().getResource("view/ServerSettingsVIew.fxml"));
+		Parent root = loader.load();
+		Stage stage = new Stage();
+		stage.setScene(new Scene(root));
+		stage.setTitle("  Settings");
+		stage.setResizable(false);
+		// настройка новой сцены в качестве модальной
+		stage.initModality(Modality.APPLICATION_MODAL);
+		stage.initStyle(StageStyle.UTILITY);
+		stage.show();
 	}
 
 	@FXML
