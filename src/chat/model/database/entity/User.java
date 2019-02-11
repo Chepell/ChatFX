@@ -1,4 +1,4 @@
-package database.hibernate.entity;
+package chat.model.database.entity;
 
 import javax.persistence.*;
 
@@ -24,6 +24,7 @@ public class User {
 	@Column(name = "online")
 	private boolean online;
 
+	public User() {}
 
 	public User(String login, String password) {
 		this.login = login;
@@ -36,8 +37,6 @@ public class User {
 		this.password = password;
 		this.online = online;
 	}
-
-	public User() {}
 
 	public int getId() {
 		return id;

@@ -1,25 +1,51 @@
 package chat;
 
+import chat.model.client_server.Listener;
+import chat.model.database.entity.User;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.WindowEvent;
 
 import java.io.IOException;
+import java.util.*;
+
+/**
+ * Artem Voytenko
+ * 08.02.2019
+ */
 
 public class ChatController {
+	// сет онлайн юзеров сразу отсоритрованный лексиграфически без учета регистра
+	private Set<String> usersOnline = new TreeSet<>(Comparator.comparing(String::toLowerCase));
+
+	private List<User> allUsers = new ArrayList<>();
+
+	@FXML
+	private TextArea messages;
+
+	@FXML
+	private Label infoLabel;
 
 	@FXML
 	private MenuBar menuBar;
 
 	@FXML
 	private MenuItem closeChatMenu;
+
+	@FXML
+	private Menu editMenu;
 
 	@FXML
 	private MenuItem addNewUserChatMenu;
@@ -31,73 +57,165 @@ public class ChatController {
 	private MenuItem aboutMenu;
 
 	@FXML
-	void initialize() {}
+	public TextArea messageBox;
 
-	// разлогиниваюсь и возвращаюсь на окно авторизации при выборе Menu -> Logoff
 	@FXML
-	void logoffAndBackToUserAuth(ActionEvent event) {
-		// разлогиниваюсь
-		logoff();
-		// получение текущей платформы из объекта меню
-		Stage stage = (Stage) menuBar.getScene().getWindow();
-		// прячу текущую сцену
-		stage.hide();
-		try {
-			// загрузка вью новой сцены
-			Parent root = FXMLLoader.load(getClass().getResource("view/userAuth.fxml"));
-			stage.setTitle("Authorization");
-			stage.setScene(new Scene(root));
-			stage.show();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	private TextArea online;
+
+	@FXML
+	public Button sendButton;
+
+	// объект комбинации клавиш для отправки сообщений через Ctrl+ENTER
+	public final KeyCombination keyComb = new KeyCodeCombination(KeyCode.ENTER, KeyCombination.CONTROL_DOWN);
+
+	@FXML
+	void initialize() {
 	}
 
-	// закрытие программы при выборе Menu -> Quit
+	/**
+	 * метод добавляет подключившегося юзера в список чата
+	 *
+	 * @param name
+	 */
+	public void addUserInOnlineSet(String name) {
+		usersOnline.add(name);
+	}
+
+	/**
+	 * метод удаляет отключившегося юзера из списка чата
+	 *
+	 * @param name
+	 */
+	public void deleteUserFromOnlineSet(String name) {
+		usersOnline.remove(name);
+	}
+
+	/**
+	 * разлогиниваюсь и возвращаюсь на окно авторизации при выборе Menu -> Logoff
+	 *
+	 * @param event
+	 */
 	@FXML
-	void closeProgram(ActionEvent event) {
-		// разлогиниваюсь
-		logoff();
-		// получение текущей платформы из объекта меню
-		Stage stage = (Stage) menuBar.getScene().getWindow();
-		// прячу текущую сцену
-		stage.hide();
-		// завершение программы
+	void logoffAndBackToAuthorization(ActionEvent event) throws IOException {
+		// удаление юзера из списка
+		Listener instance = Listener.getInstance();
+		instance.sendRequestToOffline();
+
+		// обнуляю текущего слушателя
+		Listener.deleteInstance();
+
+		// созание сцены
+		Stage primaryStage = (Stage) menuBar.getScene().getWindow();
+		Parent root = FXMLLoader.load(getClass().getResource("view/AuthorizationView.fxml"));
+		primaryStage.setScene(new Scene(root));
+		primaryStage.setTitle("  Authorization");
+		Image icon = new Image(getClass().getResourceAsStream("view/img/iconAuthorization.png"));
+		primaryStage.getIcons().add(icon); // установка иконки
+		primaryStage.centerOnScreen();
+		primaryStage.show();
+
+		primaryStage.setOnCloseRequest((WindowEvent e) -> {
+			Platform.exit();
+			System.exit(0);
+		});
+	}
+
+	/**
+	 * закрытие программы при выборе Menu -> Quit
+	 *
+	 * @param event
+	 */
+	@FXML
+	public void closeProgram(ActionEvent event) {
+		// удаление юзера из списка
+		Listener instance = Listener.getInstance();
+		instance.sendRequestToOffline();
+		Listener.deleteInstance();
+
 		Platform.exit();
 		System.exit(0);
 	}
 
-
-	// открываю окно добавления нового пользователя Edit -> Add New User
+	/**
+	 * открываю окно добавления нового пользователя Edit -> Add New User
+	 *
+	 * @param event
+	 */
 	@FXML
-	void openAddNewUserScene(ActionEvent event) {
-		popupScene("addNewUser", "Add New User");
+	public void openAddNewUserScene(ActionEvent event) {
+		popupWindow("AddNewUserView", "Add New User");
 	}
 
-	// открываю окно удаления/изменения пользователя Edit -> Delete/Edit User
+	/**
+	 * открываю окно информации о программе Help -> About
+	 *
+	 * @param event
+	 */
 	@FXML
-	void openDeleteEditUserScene(ActionEvent event) {
-		popupScene("deleteEditUser", "Delete/Edit User");
+	public void openAboutScene(ActionEvent event) {
+		popupWindow("AboutView", "About ClientApp");
 	}
 
-	// открываю окно информации о программе Help -> About
-	@FXML
-	void openAboutScene(ActionEvent event) {
-		popupScene("about", "About App");
+	/**
+	 * метод обновления списка пользователей чата
+	 */
+	public void updateOnline() {
+		Set<String> setOnline = Collections.unmodifiableSet(usersOnline);
+		StringBuilder list = new StringBuilder();
+
+		for (String s : setOnline) {
+			list.append(s).append("\n");
+		}
+		online.setText(list.toString());
 	}
 
-	// сервисный метод открытия всплывающих окон из меню
-	private void popupScene(String fxmlFileName, String SceneTitle) {
+	/**
+	 * обновление данных в основном окне чата
+	 *
+	 * @param message
+	 */
+	public void updateMessages(String message) {
+		messages.appendText(message + "\n");
+	}
+
+	/**
+	 * обновление данных в информационной панеле
+	 *
+	 * @param message
+	 */
+	public void updateInfoLabel(String message) {
+		infoLabel.setText(message);
+	}
+
+	/**
+	 * метод добавляет всех пользователей во внутренний список ChartController
+	 *
+	 * @param allUsers
+	 */
+	public void refreshAllUsersList(List<User> allUsers) {
+		this.allUsers.clear();
+		this.allUsers.addAll(allUsers);
+	}
+
+	/**
+	 * сервисный метод открытия всплывающих окон из меню
+	 *
+	 * @param fxmlFileName только имя файла fxml
+	 * @param SceneTitle   тайтл для создаваемого окна
+	 */
+	private void popupWindow(String fxmlFileName, String SceneTitle) {
 		// полный путь к вью файлу сцены
 		String file = "view/" + fxmlFileName + ".fxml";
 		try {
-			// загрузка вью новой сцены
-			Parent root = FXMLLoader.load(getClass().getResource(file));
-			// создаю новую площадку, окно появится поверх существующего
+			FXMLLoader loader = new FXMLLoader();
+			loader.setLocation(getClass().getResource(file));
+			Parent root = loader.load();
 			Stage stage = new Stage();
-			stage.setTitle("  " + SceneTitle);
 			stage.setScene(new Scene(root));
+			stage.setTitle("  " + SceneTitle);
 			stage.setResizable(false);
+			// настройка новой сцены в качестве модальной
+			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.initStyle(StageStyle.UTILITY);
 			stage.show();
 		} catch (IOException e) {
@@ -105,10 +223,12 @@ public class ChatController {
 		}
 	}
 
-	// метод разлогинивания
-	private void logoff() {
-		// обновить в бд инфу по юзеру
-		// поле статуса поменять на оффлайн
+	/**
+	 * прячу админские меню
+	 */
+	public void hideMenu() {
+		editMenu.setVisible(false);
 	}
-}
 
+
+}

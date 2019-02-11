@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="666.0" prefWidth="902.0" style="-fx-background-color: DBDBDB;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="chat.ChatController">
+    <children>
+        <TextArea fx:id="messages" focusTraversable="false" layoutX="4.0" layoutY="29.0" prefHeight="516.0" prefWidth="778.0" wrapText="true">
+            <font>
+                <Font size="16.0" />
+            </font>
+        </TextArea>
+        <AnchorPane layoutY="652.0" prefHeight="19.0" prefWidth="902.0" style="-fx-background-color: C0C0C0;">
+            <children>
+                <Label fx:id="infoLabel" alignment="CENTER_RIGHT" layoutX="582.0" layoutY="1.0" prefHeight="17.0" prefWidth="298.0" text="infoLabel" />
+            </children>
+        </AnchorPane>
+        <MenuBar fx:id="menuBar" layoutX="-1.0" layoutY="-4.0" prefHeight="25.0" prefWidth="903.0">
+            <menus>
+                <Menu mnemonicParsing="false" text="Menu">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#logoffAndBackToAuthorization" text="Logoff" />
+                        <MenuItem fx:id="closeChatMenu" mnemonicParsing="false" onAction="#closeProgram" text="Quit" />
+                    </items>
+                </Menu>
+                <Menu fx:id="editMenu" mnemonicParsing="false" text="Edit">
+                    <items>
+                        <MenuItem fx:id="addNewUserChatMenu" mnemonicParsing="false" onAction="#openAddNewUserScene" text="Add New User" />
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                    <items>
+                        <MenuItem fx:id="aboutMenu" mnemonicParsing="false" onAction="#openAboutScene" text="About" />
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+        <TextArea fx:id="messageBox" focusTraversable="false" layoutX="4.0" layoutY="550.0" prefHeight="97.0" prefWidth="778.0" promptText="Print your message here . . ." wrapText="true">
+            <font>
+                <Font size="16.0" />
+            </font>
+        </TextArea>
+        <Button fx:id="sendButton" layoutX="797.0" layoutY="554.0" mnemonicParsing="false" prefHeight="88.0" prefWidth="87.0" style="-fx-background-color: transparent;">
+            <font>
+                <Font size="16.0" />
+            </font>
+         <stylesheets>
+            <URL value="@sendButton.css" />
+            <URL value="@sendButton.css" />
+         </stylesheets>
+        </Button>
+      <TextArea fx:id="online" editable="false" focusTraversable="false" layoutX="786.0" layoutY="52.0" prefHeight="492.0" prefWidth="112.0" promptText="online now..." wrapText="true">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </TextArea>
+      <Label layoutX="832.0" layoutY="25.0" opacity="0.61" text="online">
+         <font>
+            <Font name="System Bold Italic" size="19.0" />
+         </font>
+      </Label>
+    </children>
+</AnchorPane>
