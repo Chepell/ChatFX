@@ -76,11 +76,11 @@ public class ServerSettingsController {
 	 */
 	private void saveFromFieldsToPropertiesFile() {
 		// получаю текущие значения полей
-		String ip = databaseIpField.getText();
-		String port = databasePortField.getText();
-		String username = databaseUsernameField.getText();
-		String password = databasePasswordField.getText();
-		String schema = databaseSchemaField.getText();
+		String ip = getIp();
+		String port = getPort();
+		String username = getUsername();
+		String password = getPassword();
+		String schema = getSchema();
 
 		String url = String.format("jdbc:mysql://%s:%s/%s?useSLL=false&serverTimezone=UTC", ip, port, schema);
 
@@ -105,10 +105,75 @@ public class ServerSettingsController {
 		stage.hide();
 	}
 
+	/**
+	 * метод обоабатывает нажатие кнопки "Save"
+	 *
+	 * @param event
+	 */
 	@FXML
 	void saveSettings(ActionEvent event) {
-		saveFromFieldsToPropertiesFile();
-		closeSettings(event);
+		if (fieldsCheck()) {
+			saveFromFieldsToPropertiesFile();
+			closeSettings(event);
+		}
 	}
 
+	private String getIp() {
+		return databaseIpField.getText().trim();
+	}
+
+	private String getPort() {
+		return databasePortField.getText().trim();
+	}
+
+	private String getUsername() {
+		return databaseUsernameField.getText().trim();
+	}
+
+	private String getPassword() {
+		return databasePasswordField.getText().trim();
+	}
+
+	private String getSchema() {
+		return databaseSchemaField.getText().trim();
+	}
+
+
+
+	/**
+	 * прверка корректности заполнения всех полей
+	 *
+	 * @return
+	 */
+	private boolean fieldsCheck() {
+		boolean result;
+
+		// получаю текущие значения полей
+		String ip = getIp();
+		String port = getPort();
+		String username = getUsername();
+		String password = getPassword();
+		String schema = getSchema();
+
+		// проверка заполнены ли поля
+		if (!ip.isEmpty() && !port.isEmpty() && !username.isEmpty() && !password.isEmpty() && !schema.isEmpty()) {
+			result = true;
+		} else if (ip.isEmpty()) {
+			errorLabel.setText("IP is empty!");
+			result = false;
+		} else if (port.isEmpty()) {
+			errorLabel.setText("Port is empty!");
+			result = false;
+		} else if (username.isEmpty()) {
+			errorLabel.setText("Username is empty!");
+			result = false;
+		} else if (password.isEmpty()) {
+			errorLabel.setText("Password is empty!");
+			result = false;
+		} else {
+			errorLabel.setText("Schema is empty!");
+			result = false;
+		}
+		return result;
+	}
 }
