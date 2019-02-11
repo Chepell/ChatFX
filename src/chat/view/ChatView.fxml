@@ -12,7 +12,7 @@
 
 <AnchorPane prefHeight="666.0" prefWidth="902.0" style="-fx-background-color: DBDBDB;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="chat.ChatController">
     <children>
-        <TextArea fx:id="messages" focusTraversable="false" layoutX="4.0" layoutY="29.0" prefHeight="516.0" prefWidth="778.0" wrapText="true">
+        <TextArea fx:id="messages" focusTraversable="false" layoutX="4.0" layoutY="25.0" prefHeight="520.0" prefWidth="778.0" wrapText="true">
             <font>
                 <Font size="16.0" />
             </font>
@@ -42,7 +42,7 @@
                 </Menu>
             </menus>
         </MenuBar>
-        <TextArea fx:id="messageBox" focusTraversable="false" layoutX="4.0" layoutY="550.0" prefHeight="97.0" prefWidth="778.0" promptText="Print your message here . . ." wrapText="true">
+        <TextArea fx:id="messageBox" focusTraversable="false" layoutX="4.0" layoutY="549.0" prefHeight="99.0" prefWidth="778.0" promptText="Print your message here . . ." wrapText="true">
             <font>
                 <Font size="16.0" />
             </font>
@@ -56,7 +56,7 @@
             <URL value="@sendButton.css" />
          </stylesheets>
         </Button>
-      <TextArea fx:id="online" editable="false" focusTraversable="false" layoutX="786.0" layoutY="52.0" prefHeight="492.0" prefWidth="112.0" promptText="online now..." wrapText="true">
+      <TextArea fx:id="online" editable="false" focusTraversable="false" layoutX="786.0" layoutY="52.0" prefHeight="493.0" prefWidth="112.0" promptText="online now..." wrapText="true">
          <font>
             <Font size="14.0" />
          </font>

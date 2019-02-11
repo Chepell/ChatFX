@@ -13,6 +13,15 @@ public class PropertiesHandler {
 	// мэп для хранения свойств полученных из файла
 	private Properties properties = new Properties();
 
+
+	/**
+	 * получить объект всех свойств
+	 * @return
+	 */
+	public Properties loadProperties() {
+		return properties;
+	}
+
 	/**
 	 * конструктор
 	 *
@@ -46,6 +55,16 @@ public class PropertiesHandler {
 	 */
 	public void setProperty(String propertiesName, String value) {
 		properties.setProperty(propertiesName, value);
+	}
+
+	/**
+	 * метод возвращает свойство в виде числа
+	 *
+	 * @param propertiesName имя свойства
+	 * @return
+	 */
+	public int getIntProperty(String propertiesName) {
+		return Integer.parseInt(properties.getProperty(propertiesName));
 	}
 
 	/**

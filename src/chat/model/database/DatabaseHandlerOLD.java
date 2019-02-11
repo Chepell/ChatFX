@@ -2,7 +2,6 @@ package chat.model.database;
 
 import chat.model.database.entity.MessageDB;
 import chat.model.database.entity.User;
-import chat.model.handlers.PropertiesHandler;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -16,27 +15,22 @@ import java.util.List;
  */
 
 // класс обработчик общения с БД в виде сингтона
-public class DatabaseHandler {
-	private static final PropertiesHandler properties = new PropertiesHandler("hibernate");
+public class DatabaseHandlerOLD {
 	private static volatile SessionFactory sessionFactory;
 
-	private DatabaseHandler() {}
+	private DatabaseHandlerOLD() {}
 
 	/**
 	 * метод первичной инициализации
 	 */
-	public static SessionFactory getSessionFactory() {
+	public static void initSessionFactory() {
 		if (sessionFactory == null) {
-			Configuration hibernateConfig = new Configuration();
-			hibernateConfig.setProperties(properties.loadProperties());
-
-			// build session factory
-			sessionFactory = hibernateConfig
+			sessionFactory = new Configuration()
+					.configure("hibernate.cfg.xml")
 					.addAnnotatedClass(User.class)
 					.addAnnotatedClass(MessageDB.class)
 					.buildSessionFactory();
 		}
-		return sessionFactory;
 	}
 
 	/**
@@ -54,8 +48,11 @@ public class DatabaseHandler {
 	 * @return
 	 */
 	public static List<User> getAllUsers() {
+		// создаю синглтон если еще не создан
+		if (sessionFactory == null) initSessionFactory();
+
 		// открытие текущей сессии
-		Session currentSession = getSessionFactory().openSession();
+		Session currentSession = sessionFactory.getCurrentSession();
 
 		// начало транзацкии
 		currentSession.beginTransaction();
@@ -77,9 +74,11 @@ public class DatabaseHandler {
 	 * @return возвращает список состоящий из одного пользователея, либо пустой
 	 */
 	public static List<User> searchUser(String login) {
-		// открытие текущей сессии
-		Session currentSession = getSessionFactory().openSession();
+		// создаю синглтон если еще не создан
+		if (sessionFactory == null) initSessionFactory();
 
+		// открытие текущей сессии
+		Session currentSession = sessionFactory.getCurrentSession();
 		Query query;
 
 		// начало транзацкии
@@ -110,9 +109,11 @@ public class DatabaseHandler {
 	 */
 	// сохранение объекта в БД
 	public static int saveUser(User user) {
-		// открытие текущей сессии
-		Session currentSession = getSessionFactory().openSession();
+		// создаю синглтон если еще не создан
+		if (sessionFactory == null) initSessionFactory();
 
+		// открытие текущей сессии
+		Session currentSession = sessionFactory.getCurrentSession();
 		// начало транзацкии
 		currentSession.beginTransaction();
 		// сохранение объекта
@@ -130,9 +131,11 @@ public class DatabaseHandler {
 	 */
 	// сохранение объекта в БД
 	public static int saveMessage(MessageDB messageDB) {
-		// открытие текущей сессии
-		Session currentSession = getSessionFactory().openSession();
+		// создаю синглтон если еще не создан
+		if (sessionFactory == null) initSessionFactory();
 
+		// открытие текущей сессии
+		Session currentSession = sessionFactory.getCurrentSession();
 		// начало транзацкии
 		currentSession.beginTransaction();
 		// сохранение объекта
@@ -148,8 +151,11 @@ public class DatabaseHandler {
 	 * @return возвращает список всех объектов
 	 */
 	public static List<MessageDB> getAllMessages() {
+		// создаю синглтон если еще не создан
+		if (sessionFactory == null) initSessionFactory();
+
 		// открытие текущей сессии
-		Session currentSession = getSessionFactory().openSession();
+		Session currentSession = sessionFactory.getCurrentSession();
 
 		// начало транзацкии
 		currentSession.beginTransaction();
@@ -170,9 +176,11 @@ public class DatabaseHandler {
 	 * @return
 	 */
 	public static List<User> getOnlineUsers() {
-		// открытие текущей сессии
-		Session currentSession = getSessionFactory().openSession();
+		// создаю синглтон если еще не создан
+		if (sessionFactory == null) initSessionFactory();
 
+		// открытие текущей сессии
+		Session currentSession = sessionFactory.getCurrentSession();
 		Query query;
 
 		// начало транзацкии
@@ -201,9 +209,11 @@ public class DatabaseHandler {
 	 * @return
 	 */
 	public static List<User> getOfflineUsers() {
-		// открытие текущей сессии
-		Session currentSession = getSessionFactory().openSession();
+		// создаю синглтон если еще не создан
+		if (sessionFactory == null) initSessionFactory();
 
+		// открытие текущей сессии
+		Session currentSession = sessionFactory.getCurrentSession();
 		Query query;
 
 		// начало транзацкии
@@ -233,9 +243,11 @@ public class DatabaseHandler {
 	 * @param isOnline
 	 */
 	public static void setUserStatus(String login, boolean isOnline) {
-		// открытие текущей сессии
-		Session currentSession = getSessionFactory().openSession();
+		// создаю синглтон если еще не создан
+		if (sessionFactory == null) initSessionFactory();
 
+		// открытие текущей сессии
+		Session currentSession = sessionFactory.getCurrentSession();
 		Query query;
 
 		// начало транзацкии

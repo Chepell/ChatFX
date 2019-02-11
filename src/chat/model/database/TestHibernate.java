@@ -12,6 +12,8 @@ import java.util.List;
 public class TestHibernate {
 	public static void main(String[] args) {
 
+//		SessionFactory sessionFactory = DatabaseHandler.getSessionFactory();
+
 //		List<User> list = DatabaseHandler.getAllUsers();
 //
 //		Collections.sort(list, Comparator
@@ -39,6 +41,8 @@ public class TestHibernate {
 
 		System.out.println(s);
 
+//		DatabaseHandler.closeSessionFactory();
+
 
 	}
 
@@ -49,4 +53,5 @@ public class TestHibernate {
 		}
 		return builder.toString();
 	}
+
 }

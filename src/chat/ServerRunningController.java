@@ -17,7 +17,7 @@ public class ServerRunningController {
 	@FXML
 	void initialize() {
 		// подключение к БД в отдельном потоке демоне
-		Thread databaseThread = new Thread(DatabaseHandler::initSessionFactory);
+		Thread databaseThread = new Thread(DatabaseHandler::getSessionFactory);
 		databaseThread.setDaemon(true);
 		databaseThread.start();
 
