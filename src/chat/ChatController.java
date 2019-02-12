@@ -1,7 +1,6 @@
 package chat;
 
 import chat.model.client_server.Listener;
-import chat.model.database.entity.User;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -19,7 +18,10 @@ import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Artem Voytenko
@@ -27,10 +29,9 @@ import java.util.*;
  */
 
 public class ChatController {
+	private Listener listener;
 	// сет онлайн юзеров сразу отсоритрованный лексиграфически без учета регистра
 	private Set<String> usersOnline = new TreeSet<>(Comparator.comparing(String::toLowerCase));
-
-	private List<User> allUsers = new ArrayList<>();
 
 	@FXML
 	private TextArea messages;
@@ -73,6 +74,15 @@ public class ChatController {
 	}
 
 	/**
+	 * метод для передачи listener с предыдущей сцены на текущую
+	 *
+	 * @param listener
+	 */
+	public void initListener(Listener listener) {
+		this.listener = listener;
+	}
+
+	/**
 	 * метод добавляет подключившегося юзера в список чата
 	 *
 	 * @param name
@@ -97,12 +107,8 @@ public class ChatController {
 	 */
 	@FXML
 	void logoffAndBackToAuthorization(ActionEvent event) throws IOException {
-		// удаление юзера из списка
-		Listener instance = Listener.getInstance();
-		instance.sendRequestToOffline();
-
-		// обнуляю текущего слушателя
-		Listener.deleteInstance();
+		// отправка на сервер команды о уходе в оффлайн
+		listener.sendRequestToOffline();
 
 		// созание сцены
 		Stage primaryStage = (Stage) menuBar.getScene().getWindow();
@@ -127,11 +133,8 @@ public class ChatController {
 	 */
 	@FXML
 	public void closeProgram(ActionEvent event) {
-		// удаление юзера из списка
-		Listener instance = Listener.getInstance();
-		instance.sendRequestToOffline();
-		Listener.deleteInstance();
-
+		// отправка на сервер команды о уходе в оффлайн
+		listener.sendRequestToOffline();
 		Platform.exit();
 		System.exit(0);
 	}
@@ -143,7 +146,25 @@ public class ChatController {
 	 */
 	@FXML
 	public void openAddNewUserScene(ActionEvent event) {
-		popupWindow("AddNewUserView", "Add New User");
+		try {
+			FXMLLoader loader = new FXMLLoader();
+			loader.setLocation(getClass().getResource("view/AddNewUserView.fxml"));
+			Parent root = loader.load();
+
+			AddNewUserController addNewUserController = loader.getController();
+			addNewUserController.initListener(listener);
+
+			Stage stage = new Stage();
+			stage.setScene(new Scene(root));
+			stage.setTitle("  Add New User");
+			stage.setResizable(false);
+			// настройка новой сцены в качестве модальной
+			stage.initModality(Modality.APPLICATION_MODAL);
+			stage.initStyle(StageStyle.UTILITY);
+			stage.show();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -153,7 +174,23 @@ public class ChatController {
 	 */
 	@FXML
 	public void openAboutScene(ActionEvent event) {
-		popupWindow("AboutView", "About ClientApp");
+		try {
+			FXMLLoader loader = new FXMLLoader();
+			loader.setLocation(getClass().getResource("view/AboutView.fxml"));
+			Parent root = loader.load();
+
+			Stage stage = new Stage();
+			stage.setScene(new Scene(root));
+			stage.setTitle("  About ClientApp");
+			stage.setResizable(false);
+
+			// настройка новой сцены в качестве модальной
+			stage.initModality(Modality.APPLICATION_MODAL);
+			stage.initStyle(StageStyle.UTILITY);
+			stage.show();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -188,47 +225,9 @@ public class ChatController {
 	}
 
 	/**
-	 * метод добавляет всех пользователей во внутренний список ChartController
-	 *
-	 * @param allUsers
-	 */
-	public void refreshAllUsersList(List<User> allUsers) {
-		this.allUsers.clear();
-		this.allUsers.addAll(allUsers);
-	}
-
-	/**
-	 * сервисный метод открытия всплывающих окон из меню
-	 *
-	 * @param fxmlFileName только имя файла fxml
-	 * @param SceneTitle   тайтл для создаваемого окна
-	 */
-	private void popupWindow(String fxmlFileName, String SceneTitle) {
-		// полный путь к вью файлу сцены
-		String file = "view/" + fxmlFileName + ".fxml";
-		try {
-			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(getClass().getResource(file));
-			Parent root = loader.load();
-			Stage stage = new Stage();
-			stage.setScene(new Scene(root));
-			stage.setTitle("  " + SceneTitle);
-			stage.setResizable(false);
-			// настройка новой сцены в качестве модальной
-			stage.initModality(Modality.APPLICATION_MODAL);
-			stage.initStyle(StageStyle.UTILITY);
-			stage.show();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
 	 * прячу админские меню
 	 */
 	public void hideMenu() {
 		editMenu.setVisible(false);
 	}
-
-
 }

@@ -6,6 +6,7 @@ import chat.model.database.entity.User;
 import chat.model.handlers.Connection;
 import chat.model.handlers.Message;
 import chat.model.handlers.MessageType;
+import javafx.scene.input.KeyCode;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -21,7 +22,6 @@ import static chat.model.handlers.MessageType.*;
 // объект в виде сингтона, один на клиентсвое приложение
 
 public class Listener implements Runnable {
-	private static Listener instance;
 
 	// поле инициируется во внутреннем классе в отдельном потоке
 	protected Connection connection;
@@ -30,30 +30,13 @@ public class Listener implements Runnable {
 
 	// поле в которое помещается ответ от сервера при попытке добавить нового юзера
 	private MessageType addingResult;
-	private ChatController chatController;
-	private static AuthorizationController authorizationController;
+	private AuthorizationController authorizationController;
 
-	private Listener(ChatController chatController, AuthorizationController authorizationController) {
-		this.chatController = chatController;
+	public Listener(AuthorizationController authorizationController) {
 		this.authorizationController = authorizationController;
 	}
 
-	public static Listener getInstance(ChatController chatController, AuthorizationController authorizationController) {
-		if (instance == null) {
-			instance = new Listener(chatController, authorizationController);
-		}
-		return instance;
-	}
-
-	public static Listener getInstance() {
-		return instance;
-	}
-
-	public static void deleteInstance() {
-		instance = null;
-	}
-
-	public static String getLogin() {
+	public String getLogin() {
 		return authorizationController.getLogin();
 	}
 
@@ -70,11 +53,7 @@ public class Listener implements Runnable {
 	}
 
 	public ChatController getChatController() {
-		return chatController;
-	}
-
-	public void setChatController(ChatController chatController) {
-		this.chatController = chatController;
+		return authorizationController.getChatController();
 	}
 
 	public AuthorizationController getAuthorizationController() {
@@ -82,7 +61,7 @@ public class Listener implements Runnable {
 	}
 
 	public void setAuthorizationController(AuthorizationController authorizationController) {
-		Listener.authorizationController = authorizationController;
+		this.authorizationController = authorizationController;
 	}
 
 	public MessageType getAddingResult() {
@@ -106,7 +85,7 @@ public class Listener implements Runnable {
 			connection.send(message);
 		} catch (IOException e) {
 			writeMessage("Can't send message");
-			chatController.updateInfoLabel("Can't send message");
+			getChatController().updateInfoLabel("Can't send message");
 			// если ошибка отправки, то меняю флаг коннекшена к серверу
 			clientConnected = false;
 		}
@@ -126,7 +105,7 @@ public class Listener implements Runnable {
 			connection.send(message);
 		} catch (IOException e) {
 			writeMessage("Can't send message");
-			chatController.updateInfoLabel("Can't send message");
+			getChatController().updateInfoLabel("Can't send message");
 			// если ошибка отправки, то меняю флаг коннекшена к серверу
 			clientConnected = false;
 		}
@@ -143,7 +122,7 @@ public class Listener implements Runnable {
 			connection.send(message);
 		} catch (IOException e) {
 			writeMessage("Can't send message");
-			chatController.updateInfoLabel("Can't send message");
+			getChatController().updateInfoLabel("Can't send message");
 			// если ошибка отправки, то меняю флаг коннекшена к серверу
 			clientConnected = false;
 		}
@@ -183,14 +162,14 @@ public class Listener implements Runnable {
 			// запускаю окно с чатом
 			authorizationController.showScene();
 			// в чате в статус баре пишу
-			chatController.updateInfoLabel("Connect to server");
+			getChatController().updateInfoLabel("Connect to server");
 
 			// слушатель отправки сообщений по нажатию кнопки
-			chatController.sendButton.setOnAction(event -> messageHandler());
+			getChatController().sendButton.setOnAction(event -> messageHandler());
 
-			// слушатель отправки сообщений из окна ввода нажатием Ctrl+ENTER
-			chatController.messageBox.setOnKeyPressed(keyEvent -> {
-				if (chatController.keyComb.match(keyEvent)) {
+			// слушатель отправки сообщений из окна ввода нажатием ENTER
+			getChatController().messageBox.setOnKeyPressed(keyEvent -> {
+				if (keyEvent.getCode() == KeyCode.ENTER) {
 					messageHandler();
 				}
 			});
@@ -206,13 +185,13 @@ public class Listener implements Runnable {
 	private void messageHandler() {
 		// получаю содержимое из окно ввода сообщений,
 		// подрезаю пробелы что бы исключить отправку пустых сообщений
-		String message = chatController.messageBox.getText().trim();
+		String message = getChatController().messageBox.getText().trim();
 		// и если значение после этого не пустое
 		if (!message.isEmpty()) {
 			// то отправляю сообщение на сервер
 			sendTextMessage(message);
 			// отчищаю окно ввода
-			chatController.messageBox.clear();
+			getChatController().messageBox.clear();
 		}
 	}
 
@@ -226,8 +205,7 @@ public class Listener implements Runnable {
 		 * @param message
 		 */
 		protected void processIncomingMessage(String message) {
-//			writeMessage(message);
-			chatController.updateMessages(message);
+			getChatController().updateMessages(message);
 		}
 
 		/**
@@ -236,9 +214,8 @@ public class Listener implements Runnable {
 		 * @param userName
 		 */
 		public void informAboutAddingNewUser(String userName) {
-//			writeMessage(userName + " joint to chat!");
-			chatController.addUserInOnlineSet(userName);
-			chatController.updateOnline();
+			getChatController().addUserInOnlineSet(userName);
+			getChatController().updateOnline();
 		}
 
 		/**
@@ -247,8 +224,8 @@ public class Listener implements Runnable {
 		 * @param userName
 		 */
 		public void informAboutDeletingNewUser(String userName) {
-			chatController.deleteUserFromOnlineSet(userName);
-			chatController.updateOnline();
+			getChatController().deleteUserFromOnlineSet(userName);
+			getChatController().updateOnline();
 		}
 
 		/**
@@ -347,7 +324,7 @@ public class Listener implements Runnable {
 
 
 		/**
-		 * переопределение метода многопоточности
+		 * метод многопоточности внутреннего класса
 		 */
 		@Override
 		public void run() {

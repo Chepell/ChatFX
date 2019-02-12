@@ -12,6 +12,7 @@ import javafx.stage.Stage;
 import java.util.concurrent.TimeUnit;
 
 public class AddNewUserController {
+	private Listener listener;
 
 	@FXML
 	private TextField loginField;
@@ -31,12 +32,31 @@ public class AddNewUserController {
 		errorLabel.setText("");
 	}
 
+	/**
+	 * получение значения поля login с подрезкой пробелов
+	 *
+	 * @return
+	 */
 	public String getLogin() {
 		return loginField.getText().trim();
 	}
 
+	/**
+	 * получение значения поля password с подрезкой пробелов
+	 *
+	 * @return
+	 */
 	public String getPassword() {
 		return passwordField.getText().trim();
+	}
+
+	/**
+	 * метод для передачи с предыдущей сцены на текущую слушателя
+	 *
+	 * @param listener
+	 */
+	public void initListener(Listener listener) {
+		this.listener = listener;
 	}
 
 	/**
@@ -47,8 +67,8 @@ public class AddNewUserController {
 	@FXML
 	void closeScene(ActionEvent event) {
 		// получение текущей платформы по элементу
-		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 		// прячу текущую сцену
+		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 		stage.hide();
 	}
 
@@ -63,9 +83,9 @@ public class AddNewUserController {
 		if (checkNewUserFields()) {
 
 			// отправляю нового юзера добавляться в БД
-			Listener listener = Listener.getInstance();
 			listener.sendNewUserOnServer(getLogin(), getPassword());
 
+			//todo тут использовать callable and future
 			// цикл работает пока поле пустое
 			// и проверяет поле с периодичностью в пол секунды
 			do {

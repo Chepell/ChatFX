@@ -18,6 +18,7 @@ import java.io.IOException;
 
 public class AuthorizationController {
 	private static ChatController chatController;
+	private Listener listener;
 	private Scene scene;
 	private final PropertiesHandler properties = new PropertiesHandler("client");
 
@@ -61,6 +62,10 @@ public class AuthorizationController {
 		return portField.getText().trim();
 	}
 
+	public ChatController getChatController() {
+		return chatController;
+	}
+
 	/**
 	 * метод обрабатывает нажатие кнопки Login и открывает главное окно чата
 	 *
@@ -85,7 +90,7 @@ public class AuthorizationController {
 			chatController = loader.getController();
 
 			// создаю слушатель принимающий параметром текущий контроллер
-			Listener listener = Listener.getInstance(chatController, this);
+			listener = new Listener(this);
 			// запускаю в потоке
 			new Thread(listener).start();
 
@@ -100,10 +105,14 @@ public class AuthorizationController {
 	public void showScene() {
 		Platform.runLater(() -> {
 			// если юзер не админ, то прячу меню добавления и удаления юзеров
-			String user = Listener.getLogin();
+			String user = listener.getLogin();
 			if (!"admin".equals(user)) {
 				chatController.hideMenu();
 			}
+
+			// фактически отправляю текущий лисенер на следующую сцену
+			chatController.initListener(listener);
+
 			// имя текущего юзера помещаю в тайтл окна
 			String title = String.format("  ChatFX		 User: %s", user);
 
@@ -116,9 +125,10 @@ public class AuthorizationController {
 
 			stage.setOnCloseRequest((WindowEvent e) -> {
 				// удаление юзера из списка
-				Listener instance = Listener.getInstance();
-				instance.sendRequestToOffline();
-				Listener.deleteInstance();
+				listener.sendRequestToOffline();
+//				Listener instance = Listener.getInstance();
+//				instance.sendRequestToOffline();
+//				Listener.deleteInstance();
 				Platform.exit();
 				System.exit(0);
 			});
