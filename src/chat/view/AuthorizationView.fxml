@@ -73,7 +73,7 @@
         </AnchorPane>
       <ImageView fitHeight="68.0" fitWidth="86.0" layoutX="184.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@img/loginKey.png" />
+            <Image url="@pics/loginKey.png" />
          </image>
       </ImageView>
     </children>

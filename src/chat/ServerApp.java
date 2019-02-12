@@ -18,7 +18,7 @@ public class ServerApp extends Application {
 		Parent root = FXMLLoader.load(getClass().getResource("view/ServerStartView.fxml"));
 		primaryStage.setScene(new Scene(root));
 		primaryStage.setTitle("  Start Server");
-		Image icon = new Image(getClass().getResourceAsStream("view/img/iconServer.png"));
+		Image icon = new Image("chat/view/icon/iconServer.png");
 		primaryStage.getIcons().add(icon);
 
 		primaryStage.centerOnScreen();

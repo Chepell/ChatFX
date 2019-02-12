@@ -43,7 +43,7 @@ public class ServerStartController {
 	@FXML
 	void openServerSettings(ActionEvent event) throws IOException {
 		FXMLLoader loader = new FXMLLoader();
-		loader.setLocation(getClass().getResource("view/ServerSettingsVIew.fxml"));
+		loader.setLocation(getClass().getResource("view/ServerSettingsView.fxml"));
 		Parent root = loader.load();
 		Stage stage = new Stage();
 		stage.setScene(new Scene(root));

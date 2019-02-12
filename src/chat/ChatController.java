@@ -109,7 +109,7 @@ public class ChatController {
 		Parent root = FXMLLoader.load(getClass().getResource("view/AuthorizationView.fxml"));
 		primaryStage.setScene(new Scene(root));
 		primaryStage.setTitle("  Authorization");
-		Image icon = new Image(getClass().getResourceAsStream("view/img/iconAuthorization.png"));
+		Image icon = new Image("chat/view/icon/iconAuthorization.png");
 		primaryStage.getIcons().add(icon); // установка иконки
 		primaryStage.centerOnScreen();
 		primaryStage.show();

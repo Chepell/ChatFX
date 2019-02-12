@@ -24,9 +24,9 @@
                 <Font size="16.0" />
             </font>
         </Label>
-      <ImageView fitHeight="129.0" fitWidth="104.0" layoutX="149.0" layoutY="63.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="129.0" fitWidth="104.0" layoutX="150.0" layoutY="65.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@img/serverOn.png" />
+            <Image url="@pics/serverOn.png" />
          </image>
       </ImageView>
     </children>

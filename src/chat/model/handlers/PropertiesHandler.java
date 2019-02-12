@@ -1,8 +1,6 @@
 package chat.model.handlers;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Properties;
@@ -16,6 +14,7 @@ public class PropertiesHandler {
 
 	/**
 	 * получить объект всех свойств
+	 *
 	 * @return
 	 */
 	public Properties loadProperties() {
@@ -28,7 +27,6 @@ public class PropertiesHandler {
 	 * @param fileName имя файла (без расширения)
 	 */
 	public PropertiesHandler(String fileName) {
-
 		file = "resources/" + fileName + ".properties";
 		try (BufferedReader reader = Files.newBufferedReader(Paths.get(file))) {
 			properties.load(reader);

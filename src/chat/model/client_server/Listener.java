@@ -10,14 +10,9 @@ import chat.model.handlers.MessageType;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import static chat.model.handlers.ConsoleHelper.writeMessage;
-import static chat.model.handlers.MessageType.CLIENT_ADD_USER_IN_DB;
-import static chat.model.handlers.MessageType.CLIENT_CONNECT_RESPONSE;
-import static chat.model.handlers.MessageType.CLIENT_SEND_MESSAGE;
-import static chat.model.handlers.MessageType.SERVER_CONNECT_REQUEST;
-import static chat.model.handlers.MessageType.SERVER_USER_ACCEPTED;
+import static chat.model.handlers.MessageType.*;
 
 
 // Обмен сообщениями будет происходить в двух параллельно работающих потоках.
@@ -190,30 +185,15 @@ public class Listener implements Runnable {
 			// в чате в статус баре пишу
 			chatController.updateInfoLabel("Connect to server");
 
-			// цикл продолжается, пока клиент подключен
-			while (clientConnected) {
-				// слушатель отправки сообщений по нажатию кнопки
-				chatController.sendButton.setOnAction(event -> messageHandler());
+			// слушатель отправки сообщений по нажатию кнопки
+			chatController.sendButton.setOnAction(event -> messageHandler());
 
-				// слушатель отправки сообщений из окна ввода нажатием Ctrl+ENTER
-				chatController.messageBox.setOnKeyPressed(keyEvent -> {
-					if (chatController.keyComb.match(keyEvent)) {
-						messageHandler();
-					}
-				});
-
-				// слушаю события нажатия кнопки SEND или Ctrl+ENTER каждую секунду в данном цикле
-				// врядли человеку нужно отправлять сообщения чаще )))
-				try {
-					TimeUnit.SECONDS.sleep(1);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
+			// слушатель отправки сообщений из окна ввода нажатием Ctrl+ENTER
+			chatController.messageBox.setOnKeyPressed(keyEvent -> {
+				if (chatController.keyComb.match(keyEvent)) {
+					messageHandler();
 				}
-
-				//TODO Тут нужно как-то сделать прерывание потока (break) на основе закрытия окна чата или
-				// разлогинивания что бы к тому же на сервер полетело сообщение что пользователь ушел оффлайн
-
-			}
+			});
 		} else {
 			authorizationController.updateErrorLabel("Connection error!");
 			writeMessage("Произошла ошибка во время работы клиента.");
@@ -364,7 +344,6 @@ public class Listener implements Runnable {
 				}
 			}
 		}
-
 
 
 		/**

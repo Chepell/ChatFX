@@ -10,14 +10,17 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 public class ClientApp extends Application {
+	private static Stage primaryStageObj;
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
+		primaryStageObj = primaryStage;
+
 		// созание сцены
 		Parent root = FXMLLoader.load(getClass().getResource("view/AuthorizationView.fxml"));
 		primaryStage.setScene(new Scene(root));
 		primaryStage.setTitle("  Authorization");
-		Image icon = new Image(getClass().getResourceAsStream("view/img/iconAuthorization.png"));
+		Image icon = new Image("chat/view/icon/iconAuthorization.png");
 		primaryStage.getIcons().add(icon); // установка иконки
 		primaryStage.centerOnScreen();
 		primaryStage.show();
@@ -32,4 +35,7 @@ public class ClientApp extends Application {
 		launch(args);
 	}
 
+	public static Stage getPrimaryStage() {
+		return primaryStageObj;
+	}
 }
