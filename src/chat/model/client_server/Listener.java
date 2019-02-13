@@ -295,7 +295,6 @@ public class Listener implements Runnable {
 				MessageType type = receiveMessage.getType();
 				String data = receiveMessage.getData();
 				String login = receiveMessage.getLogin();
-				List<User> allUsers = receiveMessage.getAllUsers();
 
 				switch (type) {
 					case CLIENT_SEND_MESSAGE: // если получено текстовое сообщение

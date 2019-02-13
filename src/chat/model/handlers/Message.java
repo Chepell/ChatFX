@@ -1,9 +1,6 @@
 package chat.model.handlers;
 
-import chat.model.database.entity.User;
-
 import java.io.Serializable;
-import java.util.List;
 
 import static chat.model.handlers.MessageType.CLIENT_DISCONNECT_REQUEST;
 
@@ -15,7 +12,6 @@ public class Message implements Serializable {
 	private final String data;
 	private final String login;
 	private final String password;
-	private final List<User> allUsers;
 
 
 	public Message(MessageType type, String data, String login, String password) {
@@ -23,17 +19,7 @@ public class Message implements Serializable {
 		this.data = data;
 		this.login = login;
 		this.password = password;
-		this.allUsers = null;
 	}
-
-	public Message(MessageType type, String data, String login, String password, List<User> allUsers) {
-		this.type = type;
-		this.data = data;
-		this.login = login;
-		this.password = password;
-		this.allUsers = allUsers;
-	}
-
 
 	/**
 	 * конструктор сообщений с пустыми полямти, кроме типа, для сервисных сообщений сервера
@@ -46,7 +32,6 @@ public class Message implements Serializable {
 		this.data = null;
 		this.login = null;
 		this.password = null;
-		this.allUsers = null;
 	}
 
 	/**
@@ -60,7 +45,6 @@ public class Message implements Serializable {
 		this.data = data;
 		this.login = null;
 		this.password = null;
-		this.allUsers = null;
 	}
 
 	/**
@@ -74,7 +58,6 @@ public class Message implements Serializable {
 		this.data = null;
 		this.login = login;
 		this.password = password;
-		this.allUsers = null;
 	}
 
 	/**
@@ -86,7 +69,6 @@ public class Message implements Serializable {
 		this.data = null;
 		this.login = login;
 		this.password = null;
-		this.allUsers = null;
 	}
 
 	//region гетеры
@@ -104,10 +86,6 @@ public class Message implements Serializable {
 
 	public String getPassword() {
 		return password;
-	}
-
-	public List<User> getAllUsers() {
-		return allUsers;
 	}
 
 	//endregion
