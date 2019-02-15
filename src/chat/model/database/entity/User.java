@@ -7,7 +7,7 @@ import java.io.Serializable;
  * 15.02.2019
  */
 
-public class User implements Serializable {
+public class User implements Serializable, Comparable<User> {
 	String login;
 	boolean onlineStatus;
 
@@ -37,5 +37,10 @@ public class User implements Serializable {
 				"login='" + login + '\'' +
 				", onlineStatus=" + onlineStatus +
 				'}';
+	}
+
+	@Override
+	public int compareTo(User o) {
+		return getLogin().toLowerCase().compareTo(o.getLogin().toLowerCase());
 	}
 }

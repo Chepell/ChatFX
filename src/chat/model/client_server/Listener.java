@@ -2,6 +2,7 @@ package chat.model.client_server;
 
 import chat.AuthorizationController;
 import chat.ChatController;
+import chat.model.database.entity.User;
 import chat.model.handlers.Connection;
 import chat.model.database.entity.Message;
 import chat.model.handlers.MessageType;
@@ -9,6 +10,7 @@ import javafx.scene.input.KeyCode;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.List;
 
 import static chat.model.handlers.ConsoleHelper.writeMessage;
 import static chat.model.handlers.MessageType.*;
@@ -192,6 +194,18 @@ public class Listener implements Runnable {
 	 * Класс отвечает за поток, устанавливающий сокетное соединение и читающий сообщения сервера
 	 */
 	public class SocketThread extends Thread {
+
+		/**
+		 * метод для инициализации и отображения списка пользователей
+		 *
+		 * @param userList
+		 */
+		private void processUserList(List<User> userList) {
+			getChatController().updateUserList(userList);
+			getChatController().refreshTable();
+		}
+
+
 		/**
 		 * метод обновляет текст в окне чата
 		 *
@@ -286,6 +300,7 @@ public class Listener implements Runnable {
 				MessageType type = receiveMessage.getType();
 				String login = receiveMessage.getLogin();
 				String data = receiveMessage.getData();
+				List<User> userList = receiveMessage.getUserList();
 
 				switch (type) {
 					case CLIENT_SEND_MESSAGE: // если получено текстовое сообщение

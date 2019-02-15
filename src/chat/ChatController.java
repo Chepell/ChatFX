@@ -1,6 +1,7 @@
 package chat;
 
 import chat.model.client_server.Listener;
+import chat.model.database.entity.User;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -8,6 +9,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
@@ -32,6 +34,8 @@ public class ChatController {
 	private Listener listener;
 	// сет онлайн юзеров сразу отсоритрованный лексиграфически без учета регистра
 	private Set<String> usersOnline = new TreeSet<>(Comparator.comparing(String::toLowerCase));
+
+	private List<User> userList = new ArrayList<>();
 
 	@FXML
 	private TextArea messages;
@@ -65,6 +69,16 @@ public class ChatController {
 
 	@FXML
 	public Button sendButton;
+
+
+	@FXML
+	private TableView<User> userListTable;
+
+	@FXML
+	private TableColumn<User, String> loginColumn;
+
+	@FXML
+	private TableColumn<User, Boolean> statusColumn;
 
 	// объект комбинации клавиш для отправки сообщений через Ctrl+ENTER
 	public final KeyCombination keyComb = new KeyCodeCombination(KeyCode.ENTER, KeyCombination.CONTROL_DOWN);
