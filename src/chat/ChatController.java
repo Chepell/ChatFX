@@ -140,7 +140,7 @@ public class ChatController {
 	}
 
 	/**
-	 * открываю окно добавления нового пользователя Edit -> Add New User
+	 * открываю окно добавления нового пользователя Edit -> Add New UserDB
 	 *
 	 * @param event
 	 */
@@ -156,7 +156,7 @@ public class ChatController {
 
 			Stage stage = new Stage();
 			stage.setScene(new Scene(root));
-			stage.setTitle("  Add New User");
+			stage.setTitle("  Add New UserDB");
 			stage.setResizable(false);
 			// настройка новой сцены в качестве модальной
 			stage.initModality(Modality.APPLICATION_MODAL);

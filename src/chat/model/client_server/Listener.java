@@ -2,15 +2,13 @@ package chat.model.client_server;
 
 import chat.AuthorizationController;
 import chat.ChatController;
-import chat.model.database.entity.User;
 import chat.model.handlers.Connection;
-import chat.model.handlers.Message;
+import chat.model.database.entity.Message;
 import chat.model.handlers.MessageType;
 import javafx.scene.input.KeyCode;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.List;
 
 import static chat.model.handlers.ConsoleHelper.writeMessage;
 import static chat.model.handlers.MessageType.*;

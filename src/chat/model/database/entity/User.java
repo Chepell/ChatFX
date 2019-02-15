@@ -1,49 +1,18 @@
 package chat.model.database.entity;
 
-import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * Artem Voytenko
- * 05.02.2019
+ * 15.02.2019
  */
 
-@Entity
-@Table(name = "user")
-public class User {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id")
-	private int id;
+public class User implements Serializable {
+	String login;
+	boolean onlineStatus;
 
-	@Column(name = "login")
-	private String login;
-
-	@Column(name = "password")
-	private String password;
-
-	@Column(name = "online")
-	private boolean online;
-
-	public User() {}
-
-	public User(String login, String password) {
+	public User(String login) {
 		this.login = login;
-		this.password = password;
-		this.online = false;
-	}
-
-	public User(String login, String password, boolean online) {
-		this.login = login;
-		this.password = password;
-		this.online = online;
-	}
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
 	}
 
 	public String getLogin() {
@@ -54,29 +23,19 @@ public class User {
 		this.login = login;
 	}
 
-	public String getPassword() {
-		return password;
+	public boolean isOnlineStatus() {
+		return onlineStatus;
 	}
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public boolean isOnline() {
-		return online;
-	}
-
-	public void setOnline(boolean online) {
-		this.online = online;
+	public void setOnlineStatus(boolean onlineStatus) {
+		this.onlineStatus = onlineStatus;
 	}
 
 	@Override
 	public String toString() {
 		return "User{" +
-				"id=" + id +
-				", login='" + login + '\'' +
-				", password='" + password + '\'' +
-				", online=" + online +
+				"login='" + login + '\'' +
+				", onlineStatus=" + onlineStatus +
 				'}';
 	}
 }

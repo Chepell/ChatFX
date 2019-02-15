@@ -1,4 +1,6 @@
-package chat.model.handlers;
+package chat.model.database.entity;
+
+import chat.model.handlers.MessageType;
 
 import java.io.Serializable;
 

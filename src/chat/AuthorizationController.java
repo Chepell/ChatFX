@@ -114,7 +114,7 @@ public class AuthorizationController {
 			chatController.initListener(listener);
 
 			// имя текущего юзера помещаю в тайтл окна
-			String title = String.format("  ChatFX		 User: %s", user);
+			String title = String.format("  ChatFX		 UserDB: %s", user);
 
 			Stage stage = (Stage) loginField.getScene().getWindow();
 			stage.close();

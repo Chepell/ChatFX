@@ -1,7 +1,7 @@
 package chat.model.database;
 
 import chat.model.database.entity.MessageDB;
-import chat.model.database.entity.User;
+import chat.model.database.entity.UserDB;
 import chat.model.handlers.PropertiesHandler;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -32,7 +32,7 @@ public class DatabaseHandler {
 
 			// build session factory
 			sessionFactory = hibernateConfig
-					.addAnnotatedClass(User.class)
+					.addAnnotatedClass(UserDB.class)
 					.addAnnotatedClass(MessageDB.class)
 					.buildSessionFactory();
 		}
@@ -53,7 +53,7 @@ public class DatabaseHandler {
 	 *
 	 * @return
 	 */
-	public static List<User> getAllUsers() {
+	public static List<UserDB> getAllUsers() {
 		// открытие текущей сессии
 		Session currentSession = getSessionFactory().openSession();
 
@@ -61,7 +61,7 @@ public class DatabaseHandler {
 		currentSession.beginTransaction();
 
 		// получени списка пользователей из БД
-		List<User> users = currentSession.createQuery("FROM User", User.class).getResultList();
+		List<UserDB> users = currentSession.createQuery("FROM UserDB", UserDB.class).getResultList();
 
 		// комит транзакции в бд
 		currentSession.getTransaction().commit();
@@ -76,7 +76,7 @@ public class DatabaseHandler {
 	 * @param login
 	 * @return возвращает список состоящий из одного пользователея, либо пустой
 	 */
-	public static List<User> searchUser(String login) {
+	public static List<UserDB> searchUser(String login) {
 		// открытие текущей сессии
 		Session currentSession = getSessionFactory().openSession();
 
@@ -87,13 +87,13 @@ public class DatabaseHandler {
 
 		// поиск пользователя в БД по логину
 		// binary для соблюдения чувствительности к регистру
-		query = currentSession.createQuery("FROM User u WHERE u.login=binary(:login)");
+		query = currentSession.createQuery("FROM UserDB u WHERE u.login=binary(:login)");
 
 		// вставка в запрос параметра метода
 		query.setParameter("login", login);
 
 		// выполняю запрос
-		List<User> user = query.getResultList();
+		List<UserDB> user = query.getResultList();
 
 		// комит транзакции в бд
 		currentSession.getTransaction().commit();
@@ -109,7 +109,7 @@ public class DatabaseHandler {
 	 * @return индекс добавленного элемента, в случае успеха больше нуля
 	 */
 	// сохранение объекта в БД
-	public static int saveUser(User user) {
+	public static int saveUser(UserDB user) {
 		// открытие текущей сессии
 		Session currentSession = getSessionFactory().openSession();
 
@@ -162,97 +162,5 @@ public class DatabaseHandler {
 
 		// возвращаю результирующий список
 		return messageDBS;
-	}
-
-	/**
-	 * получить всех онлайн юзеров
-	 *
-	 * @return
-	 */
-	public static List<User> getOnlineUsers() {
-		// открытие текущей сессии
-		Session currentSession = getSessionFactory().openSession();
-
-		Query query;
-
-		// начало транзацкии
-		currentSession.beginTransaction();
-
-		// поиск пользователя в БД по логину
-		// binary для соблюдения чувствительности к регистру
-		query = currentSession.createQuery("FROM User u WHERE u.online=:val");
-
-		// вставка в запрос параметра метода
-		query.setParameter("val", true);
-
-		// выполняю запрос
-		List<User> users = query.getResultList();
-
-		// комит транзакции в бд
-		currentSession.getTransaction().commit();
-
-		// возвращаю результирующий список
-		return users;
-	}
-
-	/**
-	 * получить всех оффлайн юзеров
-	 *
-	 * @return
-	 */
-	public static List<User> getOfflineUsers() {
-		// открытие текущей сессии
-		Session currentSession = getSessionFactory().openSession();
-
-		Query query;
-
-		// начало транзацкии
-		currentSession.beginTransaction();
-
-		// поиск пользователя в БД по логину
-		// binary для соблюдения чувствительности к регистру
-		query = currentSession.createQuery("FROM User u WHERE u.online=:val");
-
-		// вставка в запрос параметра метода
-		query.setParameter("val", false);
-
-		// выполняю запрос
-		List<User> users = query.getResultList();
-
-		// комит транзакции в бд
-		currentSession.getTransaction().commit();
-
-		// возвращаю результирующий список
-		return users;
-	}
-
-	/**
-	 * сменить статус найденному пользователю
-	 *
-	 * @param login
-	 * @param isOnline
-	 */
-	public static void setUserStatus(String login, boolean isOnline) {
-		// открытие текущей сессии
-		Session currentSession = getSessionFactory().openSession();
-
-		Query query;
-
-		// начало транзацкии
-		currentSession.beginTransaction();
-
-		// поиск пользователя в БД по логину
-		// binary для соблюдения чувствительности к регистру
-		query = currentSession.createQuery("UPDATE User SET online = :status WHERE login = binary(:login)");
-
-		// вставка в запрос параметра метода
-		query.setParameter("login", login);
-		query.setParameter("status", isOnline);
-
-		// выполняю запрос
-		query.executeUpdate();
-
-		// комит транзакции в бд
-		currentSession.getTransaction().commit();
 	}
 }

@@ -1,5 +1,7 @@
 package chat.model.handlers;
 
+import chat.model.database.entity.Message;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.ObjectInputStream;

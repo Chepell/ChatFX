@@ -73,7 +73,7 @@ public class AddNewUserController {
 	}
 
 	/**
-	 * метод обрабатывает нажатие кнопки "Add User"
+	 * метод обрабатывает нажатие кнопки "Add UserDB"
 	 *
 	 * @param event
 	 */
@@ -101,7 +101,7 @@ public class AddNewUserController {
 						closeScene(event); // просто закрываю окно
 						break;
 					case SERVER_USER_ALREADY_EXIST_IN_DB:
-						errorLabel.setText("User already exist!");
+						errorLabel.setText("UserDB already exist!");
 						break;
 					case SERVER_USER_ADDING_ERROR_IN_DB:
 						errorLabel.setText("Error in DB!");

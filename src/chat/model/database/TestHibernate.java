@@ -14,11 +14,11 @@ public class TestHibernate {
 
 //		SessionFactory sessionFactory = DatabaseHandler.getSessionFactory();
 
-//		List<User> list = DatabaseHandler.getAllUsers();
+//		List<UserDB> list = DatabaseHandler.getAllUsers();
 //
 //		Collections.sort(list, Comparator
-//				.comparing(User::isOnline, Comparator.reverseOrder())
-//				.thenComparing(User::getLogin)
+//				.comparing(UserDB::isOnline, Comparator.reverseOrder())
+//				.thenComparing(UserDB::getLogin)
 //		);
 //
 //		System.out.println();

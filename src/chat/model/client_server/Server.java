@@ -3,8 +3,9 @@ package chat.model.client_server;
 import chat.model.database.DatabaseHandler;
 import chat.model.database.entity.MessageDB;
 import chat.model.database.entity.User;
+import chat.model.database.entity.UserDB;
 import chat.model.handlers.Connection;
-import chat.model.handlers.Message;
+import chat.model.database.entity.Message;
 import chat.model.handlers.MessageType;
 
 import java.io.IOException;
@@ -14,6 +15,7 @@ import java.net.SocketAddress;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static chat.model.handlers.ConsoleHelper.writeMessage;
 import static chat.model.handlers.MessageType.*;
@@ -29,11 +31,14 @@ import static chat.model.handlers.MessageType.*;
 public class Server {
 	// потокобезопасный мэп для хранения пар имя:коннекшн
 	private static Map<String, Connection> connectionMap = new ConcurrentHashMap<>();
+	private static List<User> userList = new CopyOnWriteArrayList<>();
+
 	// порт
 	private int port;
 
 	public Server(int port) {
 		this.port = port;
+		initUserList();
 		begin();
 	}
 
@@ -53,6 +58,31 @@ public class Server {
 			}
 		} catch (Exception e) { // если сервер не запустился ловлю исключение и вывожу сообщение
 			writeMessage("ServerSocket building error");
+		}
+	}
+
+	/**
+	 * первоначальная загрузка списка всех пользователей из БД в userList
+	 */
+	private static void initUserList() {
+		List<UserDB> allUsersFromDB = DatabaseHandler.getAllUsers();
+
+		for (UserDB userDB : allUsersFromDB) {
+			userList.add(new User(userDB.getLogin()));
+		}
+	}
+
+	/**
+	 * метод для изменения статуса пользователя в списке userList
+	 *
+	 * @param userName
+	 * @param onlineStatus
+	 */
+	private static void changeUserStatus(String userName, boolean onlineStatus) {
+		for (User user : userList) {
+			if (user.getLogin().equals(userName)) {
+				user.setOnlineStatus(onlineStatus);
+			}
 		}
 	}
 
@@ -113,7 +143,7 @@ public class Server {
 
 				// Если в БД в таблице user такой пользователь не найден, то опять делаю continue
 				// получаю запросом объект юзера по логину
-				List<User> user = DatabaseHandler.searchUser(login);
+				List<UserDB> user = DatabaseHandler.searchUser(login);
 				// пользователь с таким логином не был найден, возвращаюсь в начало цикла
 				if (user == null || user.isEmpty()) continue;
 
@@ -146,7 +176,7 @@ public class Server {
 		}
 
 		/**
-		 * метод для отправки новому пользователю списка всех текущих пользователей
+		 * метод для отправки всему списку пользователей онлайн имени текущего пользователя
 		 *
 		 * @param connection
 		 * @param userName
@@ -183,24 +213,21 @@ public class Server {
 					case CLIENT_SEND_MESSAGE:
 						// создаю объект сообщения для сохранения в БД
 						MessageDB messageDB = new MessageDB(userName, data);
-
-						//*** тут нужно сохранить сообщение в БД ***//
 						DatabaseHandler.saveMessage(messageDB);
 
 						// создаю сообщение для отправки
 						Message message = new Message(CLIENT_SEND_MESSAGE, messageDB.toString());
 
-						// используя статичный метод внешнего класса рассылаю сообщение по всему списку
-						// в т.ч. и отправителю, что бы оно отобразилось в его окне
-						Server.sendBroadcastMessage(message);
+						// отправке сообщений всем пользователям
+						sendBroadcastMessage(message);
 						break;
 					case CLIENT_ADD_USER_IN_DB:
 						// запрашиваю из БД пользователя с лигином как у запроса на создание
-						List<User> user = DatabaseHandler.searchUser(login);
+						List<UserDB> user = DatabaseHandler.searchUser(login);
 						// если пользователя с таким логином нет в БД
 						if (user == null || user.size() == 0) {
 							// создаю объект сущности
-							User newUser = new User(login, password);
+							UserDB newUser = new UserDB(login, password);
 							// сохраняю юзера в БД
 							int saveUserId = DatabaseHandler.saveUser(newUser);
 
@@ -219,9 +246,7 @@ public class Server {
 						connectionMap.remove(login);
 						// создаю сообщение для отправки
 						message = new Message(SERVER_USER_OFFLINE, null, login, null);
-						// используя статичный метод внешнего класса рассылаю сообщение по всему списку
-						// в т.ч. и отправителю, что бы оно отобразилось в его окне
-						Server.sendBroadcastMessage(message);
+						sendBroadcastMessage(message);
 						break;
 					default:
 						// если тип сообщения другой, то вывожу ошибку
@@ -241,10 +266,13 @@ public class Server {
 				// первоначальный контакт сервера с клиентом, запрос имени пользователя
 				// дальше не иду пока не будет идентифицирован пользователь и добавлен в мэп
 				String newUserName = serverHandshake(connection);
+
 				// рассылка всем участникам сообщения о добавлении нового юзера
-				Server.sendBroadcastMessage(new Message(SERVER_USER_ONLINE, newUserName));
-				// получение новым юзером списка всех юзеров
+				sendBroadcastMessage(new Message(SERVER_USER_ONLINE, newUserName));
+
+				// отправка всем пользователям имени вновь подключившегося пользователя
 				notifyUsers(connection, newUserName);
+
 				// главный цикл общаения клиента с сервером
 				// тут кручусь в вечном цикле получая от пользователя сообщения и рассылая их всем участникам
 				serverMainLoop(connection, newUserName);
@@ -253,6 +281,7 @@ public class Server {
 				connectionMap.remove(newUserName);
 				// информирование всех остальных участников, что юзер удален
 				sendBroadcastMessage(new Message(SERVER_USER_OFFLINE, newUserName));
+
 			} catch (IOException | ClassNotFoundException e) {
 				writeMessage("Error connection with remote server");
 			}
