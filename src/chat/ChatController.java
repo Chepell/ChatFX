@@ -78,12 +78,6 @@ public class ChatController {
 	private TableColumn<User, String> loginColumn;
 
 	@FXML
-	private TableColumn<User, Boolean> statusColumn;
-
-	// объект комбинации клавиш для отправки сообщений через Ctrl+ENTER
-	public final KeyCombination keyComb = new KeyCodeCombination(KeyCode.ENTER, KeyCombination.CONTROL_DOWN);
-
-	@FXML
 	void initialize() {
 	}
 

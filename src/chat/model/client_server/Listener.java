@@ -205,7 +205,6 @@ public class Listener implements Runnable {
 			getChatController().refreshTable();
 		}
 
-
 		/**
 		 * метод обновляет текст в окне чата
 		 *
@@ -326,7 +325,6 @@ public class Listener implements Runnable {
 				}
 			}
 		}
-
 
 		/**
 		 * метод многопоточности внутреннего класса

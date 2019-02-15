@@ -7,6 +7,7 @@ import chat.model.database.entity.UserDB;
 import chat.model.handlers.Connection;
 import chat.model.database.entity.Message;
 import chat.model.handlers.MessageType;
+import chat.model.handlers.PropertiesHandler;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -32,6 +33,7 @@ public class Server {
 	// потокобезопасный мэп для хранения пар имя:коннекшн
 	private static Map<String, Connection> connectionMap = new ConcurrentHashMap<>();
 	private static List<User> userList = new CopyOnWriteArrayList<>();
+	private static PropertiesHandler propertiesHandler = new PropertiesHandler("server");
 
 	// порт
 	private int port;
@@ -157,12 +159,11 @@ public class Server {
 				connection.send(new Message(SERVER_USER_ACCEPTED, login, null));
 
 				// нужно отправить вновь подключенному клиенту весь массив сообщений
-				//TODO тут надо сделать метод отправки не всей истории сообщений, а к примеру последних 1000
-				// добавить в пропертис сервера поле history_message_amount
-				// и сделать метод обработчик запросов сообщений из БД,
-				// который бы тут принмал параметром количество сообщений и возвращал
-				// нужное количество тут
-				List<MessageDB> allMessages = DatabaseHandler.getAllMessages();
+//				List<MessageDB> allMessages = DatabaseHandler.getAllMessages();
+
+				// загружать только определенное количество записей
+				List<MessageDB> allMessages =
+						DatabaseHandler.getMessages(propertiesHandler.getIntProperty("history_message_amount"));
 
 				// если в БД есть история сообщений
 				if (allMessages != null && !allMessages.isEmpty()) {

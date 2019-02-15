@@ -8,6 +8,9 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.query.Query;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -161,6 +164,25 @@ public class DatabaseHandler {
 		currentSession.getTransaction().commit();
 
 		// возвращаю результирующий список
+		return messageDBS;
+	}
+
+	/**
+	 * мето возвращает последние
+	 * @param rows
+	 * @return
+	 */
+	public static List<MessageDB> getMessages(int rows) {
+		List<MessageDB> allMessages = getAllMessages();
+		if (allMessages.size() < rows) return allMessages;
+
+		Collections.reverse(allMessages);
+		List<MessageDB> messageDBS = new ArrayList<>(rows);
+		for (int i = 0; i < rows; i++) {
+			messageDBS.add(allMessages.get(i));
+		}
+		Collections.reverse(messageDBS);
+
 		return messageDBS;
 	}
 }
