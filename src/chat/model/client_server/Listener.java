@@ -77,7 +77,7 @@ public class Listener implements Runnable {
 	 */
 	public void sendTextMessage(String text) {
 		// создаю объект сообщения на основе переданного в параметре текста
-		Message message = new Message(CLIENT_SEND_MESSAGE, text);
+		Message message = new Message(text);
 		try {
 			// отправляю сообщение используя метод коннекшна
 			connection.send(message);
@@ -96,11 +96,8 @@ public class Listener implements Runnable {
 	 * @param password
 	 */
 	public void sendNewUserOnServer(String login, String password) {
-		// создаю объект сообщения на основе переданных параметров
-		Message message = new Message(CLIENT_ADD_USER_IN_DB, login, password);
 		try {
-			// отправляю сообщение используя метод коннекшна
-			connection.send(message);
+			connection.send(new Message(CLIENT_ADD_USER_IN_DB, login, password));
 		} catch (IOException e) {
 			writeMessage("Can't send message");
 			getChatController().updateInfoLabel("Can't send message");
@@ -113,11 +110,9 @@ public class Listener implements Runnable {
 	 * метод для отправки на сервер сервисного сообщения ухода юзера офлайн
 	 */
 	public void sendRequestToOffline() {
-		// создаю объект сообщения на основе переданных параметров
-		Message message = new Message(getLogin());
 		try {
 			// отправляю сообщение используя метод коннекшна
-			connection.send(message);
+			connection.send(new Message(CLIENT_DISCONNECT_REQUEST, getLogin(), null));
 		} catch (IOException e) {
 			writeMessage("Can't send message");
 			getChatController().updateInfoLabel("Can't send message");
@@ -233,7 +228,6 @@ public class Listener implements Runnable {
 		 */
 		protected void informAboutAddingNewUserInDB(MessageType type) {
 			Listener.this.setAddingResult(type);
-
 		}
 
 		/**
@@ -265,9 +259,8 @@ public class Listener implements Runnable {
 
 				// если это было сервисное сообщение от сервера с запросом имени
 				if (type == SERVER_CONNECT_REQUEST) {
-					// формирую сообщение для отправка
-					Message message = new Message(CLIENT_CONNECT_RESPONSE, getLogin(), getPassword());
-					connection.send(message);
+					// отправляю сообщение с логином/паролем
+					connection.send(new Message(CLIENT_CONNECT_RESPONSE, getLogin(), getPassword()));
 					// если же сообщение с подтверждением имени
 				} else if (type == SERVER_USER_ACCEPTED) {
 					// то вызываю метод, который статус коннекшена меняет
@@ -291,8 +284,8 @@ public class Listener implements Runnable {
 				// получаю сообщение от сервера из коннекшена
 				Message receiveMessage = connection.receive();
 				MessageType type = receiveMessage.getType();
-				String data = receiveMessage.getData();
 				String login = receiveMessage.getLogin();
+				String data = receiveMessage.getData();
 
 				switch (type) {
 					case CLIENT_SEND_MESSAGE: // если получено текстовое сообщение
@@ -300,7 +293,7 @@ public class Listener implements Runnable {
 						processIncomingMessage(data);
 						break;
 					case SERVER_USER_ONLINE: // если это добавление нового пользователя
-						informAboutAddingNewUser(data);
+						informAboutAddingNewUser(login);
 						break;
 					case SERVER_USER_OFFLINE: // в случае удаления пользователя
 						informAboutDeletingNewUser(login);
@@ -341,6 +334,4 @@ public class Listener implements Runnable {
 			}
 		}
 	}
-
-
 }

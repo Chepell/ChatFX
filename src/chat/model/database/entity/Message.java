@@ -4,73 +4,51 @@ import chat.model.handlers.MessageType;
 
 import java.io.Serializable;
 
-import static chat.model.handlers.MessageType.CLIENT_DISCONNECT_REQUEST;
+import static chat.model.handlers.MessageType.*;
 
 // класс отвечающий за пересылаемы сообщения
 public class Message implements Serializable {
 	// тип сообщения
 	private final MessageType type;
 	// данные сообщения
-	private final String data;
 	private final String login;
-	private final String password;
+	private final String data;
 
 
-	public Message(MessageType type, String data, String login, String password) {
+	/**
+	 * конструктор для отправки сервисных сообщений на сервер
+	 *
+	 * @param type  CLIENT_CONNECT_RESPONSE, CLIENT_ADD_USER_IN_DB, SERVER_USER_ONLINE, SERVER_USER_OFFLINE
+	 * @param login
+	 */
+	public Message(MessageType type, String login, String data) {
 		this.type = type;
-		this.data = data;
 		this.login = login;
-		this.password = password;
+		this.data = data;
 	}
 
 	/**
-	 * конструктор сообщений с пустыми полямти, кроме типа, для сервисных сообщений сервера
+	 * конструктор сообщений с пустыми полями, кроме типа, для сервисных сообщений сервера
 	 * запрос имени и подтверждение
 	 *
-	 * @param type SERVER_CONNECT_REQUEST, SERVER_USER_ACCEPTED
+	 * @param type SERVER_CONNECT_REQUEST, SERVER_USER_ACCEPTED, SERVER_USER_ADDING_ERROR_IN_DB,
+	 *             SERVER_USER_SUCCESSFULLY_ADD_IN_DB, SERVER_USER_ALREADY_EXIST_IN_DB
 	 */
 	public Message(MessageType type) {
 		this.type = type;
-		this.data = null;
 		this.login = null;
-		this.password = null;
+		this.data = null;
 	}
 
 	/**
 	 * конструктор для отправки обычных сообщений от пользователя на сервер
 	 *
-	 * @param type CLIENT_SEND_MESSAGE
 	 * @param data сообщение пользователя
 	 */
-	public Message(MessageType type, String data) {
-		this.type = type;
-		this.data = data;
+	public Message(String data) {
+		this.type = CLIENT_SEND_MESSAGE;
 		this.login = null;
-		this.password = null;
-	}
-
-	/**
-	 * конструктор для отправки сервисных сообщений на сервер
-	 * @param type CLIENT_CONNECT_RESPONSE, CLIENT_ADD_USER_IN_DB
-	 * @param login
-	 * @param password
-	 */
-	public Message(MessageType type, String login, String password) {
-		this.type = type;
-		this.data = null;
-		this.login = login;
-		this.password = password;
-	}
-
-	/**
-	 * конструктор для отпрвки сообщения на разлогинивание юзера
-	 * @param login
-	 */
-	public Message(String login) {
-		this.type = CLIENT_DISCONNECT_REQUEST;
-		this.data = null;
-		this.login = login;
-		this.password = null;
+		this.data = data;
 	}
 
 	//region гетеры
@@ -78,18 +56,13 @@ public class Message implements Serializable {
 		return type;
 	}
 
-	public String getData() {
-		return data;
-	}
-
 	public String getLogin() {
 		return login;
 	}
 
-	public String getPassword() {
-		return password;
+	public String getData() {
+		return data;
 	}
-
 	//endregion
 }
 

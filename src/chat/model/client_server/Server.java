@@ -136,7 +136,7 @@ public class Server {
 
 				// достаю из полученного сообщения логин и пароль
 				String login = receiveMessage.getLogin();
-				String password = receiveMessage.getPassword();
+				String password = receiveMessage.getData();
 
 				// если поля пустые, то начинаю цикл сначала
 				if (login == null || password == null) continue;
@@ -154,7 +154,7 @@ public class Server {
 				// полученного имени в сообщении и значением конеекшн переданный параметром в методе
 				connectionMap.put(login, connection);
 				// отправляю клиенту команду информирующую, что его имя принято
-				connection.send(new Message(SERVER_USER_ACCEPTED, login));
+				connection.send(new Message(SERVER_USER_ACCEPTED, login, null));
 
 				// нужно отправить вновь подключенному клиенту весь массив сообщений
 				//TODO тут надо сделать метод отправки не всей истории сообщений, а к примеру последних 1000
@@ -168,7 +168,7 @@ public class Server {
 				if (allMessages != null && !allMessages.isEmpty()) {
 					// конвертирую все в одно сообщение
 					String messages = convertHistoryMessagesFromDBtoString(allMessages);
-					connection.send(new Message(CLIENT_SEND_MESSAGE, messages));
+					connection.send(new Message(messages));
 				}
 				// возвращаю принятое имя
 				return login;
@@ -184,10 +184,10 @@ public class Server {
 		 */
 		private void notifyUsers(Connection connection, String userName) throws IOException {
 			// циклом иду по множеству ключей мэпа
-			for (String key : connectionMap.keySet()) {
+			for (String user : connectionMap.keySet()) {
 				// если текущий ключ из мэпа не равен пользователю переданном в сигнатуре метода
 				// то отправляю на коннекшн текущего юзера объект сообщения с типом SERVER_USER_ONLINE и имя
-				if (!key.equals(userName)) connection.send(new Message(SERVER_USER_ONLINE, key));
+				if (!user.equals(userName)) connection.send(new Message(SERVER_USER_ONLINE, user, null));
 			}
 		}
 
@@ -205,9 +205,8 @@ public class Server {
 				Message receiveMessage = connection.receive();
 				// забираю данные
 				MessageType type = receiveMessage.getType();
-				String data = receiveMessage.getData();
 				String login = receiveMessage.getLogin();
-				String password = receiveMessage.getPassword();
+				String data = receiveMessage.getData();
 
 				switch (type) {
 					case CLIENT_SEND_MESSAGE:
@@ -216,7 +215,7 @@ public class Server {
 						DatabaseHandler.saveMessage(messageDB);
 
 						// создаю сообщение для отправки
-						Message message = new Message(CLIENT_SEND_MESSAGE, messageDB.toString());
+						Message message = new Message(messageDB.toString());
 
 						// отправке сообщений всем пользователям
 						sendBroadcastMessage(message);
@@ -227,7 +226,7 @@ public class Server {
 						// если пользователя с таким логином нет в БД
 						if (user == null || user.size() == 0) {
 							// создаю объект сущности
-							UserDB newUser = new UserDB(login, password);
+							UserDB newUser = new UserDB(login, data);
 							// сохраняю юзера в БД
 							int saveUserId = DatabaseHandler.saveUser(newUser);
 
@@ -244,9 +243,8 @@ public class Server {
 					case CLIENT_DISCONNECT_REQUEST:
 						// удаляю юзера из мэпа
 						connectionMap.remove(login);
-						// создаю сообщение для отправки
-						message = new Message(SERVER_USER_OFFLINE, null, login, null);
-						sendBroadcastMessage(message);
+
+						sendBroadcastMessage(new Message(SERVER_USER_OFFLINE, login, null));
 						break;
 					default:
 						// если тип сообщения другой, то вывожу ошибку
@@ -268,7 +266,7 @@ public class Server {
 				String newUserName = serverHandshake(connection);
 
 				// рассылка всем участникам сообщения о добавлении нового юзера
-				sendBroadcastMessage(new Message(SERVER_USER_ONLINE, newUserName));
+				sendBroadcastMessage(new Message(SERVER_USER_ONLINE, newUserName, null));
 
 				// отправка всем пользователям имени вновь подключившегося пользователя
 				notifyUsers(connection, newUserName);
@@ -280,7 +278,7 @@ public class Server {
 				// вышли из главного цикла, пользователь разлогинился удаляю его из мэпа
 				connectionMap.remove(newUserName);
 				// информирование всех остальных участников, что юзер удален
-				sendBroadcastMessage(new Message(SERVER_USER_OFFLINE, newUserName));
+				sendBroadcastMessage(new Message(SERVER_USER_OFFLINE, newUserName, null));
 
 			} catch (IOException | ClassNotFoundException e) {
 				writeMessage("Error connection with remote server");
