@@ -1,13 +1,12 @@
 package chat.model.client_server;
 
 import chat.model.database.DatabaseHandler;
+import chat.model.database.entity.Message;
 import chat.model.database.entity.MessageDB;
 import chat.model.database.entity.User;
 import chat.model.database.entity.UserDB;
 import chat.model.handlers.Connection;
-import chat.model.database.entity.Message;
 import chat.model.handlers.MessageType;
-import chat.model.handlers.PropertiesHandler;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -33,7 +32,6 @@ public class Server {
 	// потокобезопасный мэп для хранения пар имя:коннекшн
 	private static Map<String, Connection> connectionMap = new ConcurrentHashMap<>();
 	private static List<User> userList = new CopyOnWriteArrayList<>();
-	private static PropertiesHandler propertiesHandler = new PropertiesHandler("server");
 
 	// порт
 	private int port;
@@ -163,7 +161,7 @@ public class Server {
 
 				// загружать только определенное количество записей
 				List<MessageDB> allMessages =
-						DatabaseHandler.getMessages(propertiesHandler.getIntProperty("history_message_amount"));
+						DatabaseHandler.getMessages();
 
 				// если в БД есть история сообщений
 				if (allMessages != null && !allMessages.isEmpty()) {
@@ -222,7 +220,7 @@ public class Server {
 						sendBroadcastMessage(message);
 						break;
 					case CLIENT_ADD_USER_IN_DB:
-						// запрашиваю из БД пользователя с лигином как у запроса на создание
+						// запрашиваю из БД пользователя с логином как у запроса на создание
 						List<UserDB> user = DatabaseHandler.searchUser(login);
 						// если пользователя с таким логином нет в БД
 						if (user == null || user.size() == 0) {
@@ -234,8 +232,15 @@ public class Server {
 							// провека по id корректности добавления пользователя
 							if (saveUserId == 0) {
 								connection.send(new Message(SERVER_USER_ADDING_ERROR_IN_DB));
-							} else {
+							} else { // если пользователь успешно добавлен в БД
 								connection.send(new Message(SERVER_USER_SUCCESSFULLY_ADD_IN_DB));
+
+								// обновляю списки
+								connectionMap.put(login, connection);
+								userList.add(new User(login));
+
+								// рассылка всем участникам обновленный список
+								sendBroadcastMessage(new Message(SERVER_BROADCAST_USER_LIST, userList));
 							}
 						} else {
 							connection.send(new Message(SERVER_USER_ALREADY_EXIST_IN_DB));

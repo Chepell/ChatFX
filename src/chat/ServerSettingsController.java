@@ -31,6 +31,9 @@ public class ServerSettingsController {
 	private TextField databaseSchemaField;
 
 	@FXML
+	private TextField databaseLoadHistoryField;
+
+	@FXML
 	private Label errorLabel;
 
 	@FXML
@@ -47,6 +50,7 @@ public class ServerSettingsController {
 		String url = properties.getProperty("hibernate.connection.url");
 		String username = properties.getProperty("hibernate.connection.username");
 		String password = properties.getProperty("hibernate.connection.password");
+		String historyLoad = properties.getProperty("hibernate.history.load");
 
 		String regex = ".+//(.+):(\\d+)/(.+)\\?.+";
 
@@ -68,6 +72,8 @@ public class ServerSettingsController {
 		databaseUsernameField.setText(username);
 		databasePasswordField.setText(password);
 		databaseSchemaField.setText(schema);
+		databaseLoadHistoryField.setText(historyLoad);
+
 		errorLabel.setText("");
 	}
 
@@ -81,6 +87,8 @@ public class ServerSettingsController {
 		String username = getUsername();
 		String password = getPassword();
 		String schema = getSchema();
+		String loadHistory = getLoadHistory();
+
 
 		String url = String.format("jdbc:mysql://%s:%s/%s?useSLL=false&serverTimezone=UTC", ip, port, schema);
 
@@ -88,6 +96,7 @@ public class ServerSettingsController {
 		properties.setProperty("hibernate.connection.url", url);
 		properties.setProperty("hibernate.connection.username", username);
 		properties.setProperty("hibernate.connection.password", password);
+		properties.setProperty("hibernate.history.load", loadHistory);
 
 		properties.savePropertiesToFile();
 	}
@@ -138,6 +147,9 @@ public class ServerSettingsController {
 		return databaseSchemaField.getText().trim();
 	}
 
+	private String getLoadHistory() {
+		return databaseLoadHistoryField.getText().trim();
+	}
 
 
 	/**

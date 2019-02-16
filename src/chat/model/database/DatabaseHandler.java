@@ -8,9 +8,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.query.Query;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -168,21 +166,54 @@ public class DatabaseHandler {
 	}
 
 	/**
-	 * мето возвращает последние
-	 * @param rows
+	 * метод возвращает определенное количество записей из таблицы
+	 * количество записей определяется исходя из соответствующего параметра в properties файле
+	 *
 	 * @return
 	 */
-	public static List<MessageDB> getMessages(int rows) {
-		List<MessageDB> allMessages = getAllMessages();
-		if (allMessages.size() < rows) return allMessages;
+	public static List<MessageDB> getMessages() {
+		int historyLoad = Integer.parseInt(properties.getProperty("hibernate.history.load"));
 
-		Collections.reverse(allMessages);
-		List<MessageDB> messageDBS = new ArrayList<>(rows);
-		for (int i = 0; i < rows; i++) {
-			messageDBS.add(allMessages.get(i));
-		}
+		// открытие текущей сессии
+		Session currentSession = getSessionFactory().openSession();
+
+		// начало транзацкии
+		currentSession.beginTransaction();
+
+		Query query = currentSession.createQuery("FROM MessageDB ORDER BY id DESC", MessageDB.class);
+		query.setMaxResults(historyLoad);
+		List<MessageDB> messageDBS = query.getResultList();
+
+		// комит транзакции в бд
+		currentSession.getTransaction().commit();
+
 		Collections.reverse(messageDBS);
+		// возвращаю результирующий список
+		return messageDBS;
+	}
 
+	/**
+	 * метод возвращает определенное количество записей из таблицы
+	 *
+	 * @param historyLoad количество загружаемых записей
+	 * @return
+	 */
+	public static List<MessageDB> getMessages(int historyLoad) {
+		// открытие текущей сессии
+		Session currentSession = getSessionFactory().openSession();
+
+		// начало транзацкии
+		currentSession.beginTransaction();
+
+		Query query = currentSession.createQuery("FROM MessageDB ORDER BY id DESC", MessageDB.class);
+		query.setMaxResults(historyLoad);
+		List<MessageDB> messageDBS = query.getResultList();
+
+		// комит транзакции в бд
+		currentSession.getTransaction().commit();
+
+		Collections.reverse(messageDBS);
+		// возвращаю результирующий список
 		return messageDBS;
 	}
 }
